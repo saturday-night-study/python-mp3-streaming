@@ -10,7 +10,7 @@ class FileIO:
     # 타입 힌트 추가
     def open(self, path: str) -> bool:
         if not isinstance(path, str):
-            print(f"입력된 파일 경로가 문자열이 아닙니다: [{path}] => {type(path)}")
+            print(f"입력된 파일 경로가 문자열이 아닙니다: path{type(path)}=[{path}]")
             return False
 
         try:
