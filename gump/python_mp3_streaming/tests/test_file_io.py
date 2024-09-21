@@ -18,25 +18,26 @@ class TestFileIO(unittest.TestCase):
     # 메서드명 변경
     # 존재하는 파일이 입력된 경우 파일 객체를 반환하는지 확인
     def test_open_exists_file(self):
-        file = self.__file_io.open(self.__exists_input_path)
-        self.assertIsNotNone(file)
+        result = self.__file_io.open(self.__exists_input_path)
+        self.assertTrue(result)
 
     # 존재하지 않는 파일이 입력된 경우 None을 반환하는지 확인
     def test_open_not_exists_file(self):
-        file = self.__file_io.open(self.__not_exists_input_path)
-        self.assertIsNone(file)
+        result = self.__file_io.open(self.__not_exists_input_path)
+        self.assertFalse(result)
 
     # 파일 경로가 문자열이 아닌 타입으로 입력된 경우 None을 반환하는지 확인
     def test_open_invalid_parameter_type(self):
-        file = self.__file_io.open(123)
-        self.assertIsNone(file)
+        result = self.__file_io.open(123)
+        self.assertFalse(result)
 
     # 파일 객체를 닫는지 확인
     def test_close_file(self):
-        file = self.__file_io.open(self.__exists_input_path)
-        self.assertIsNotNone(file)
-        self.__file_io.close(file)
-        self.assertTrue(file.closed)
+        result = self.__file_io.open(self.__exists_input_path)
+        self.assertIsNotNone(result)
+
+        self.__file_io.close()
+        self.assertTrue(self.__file_io.closed)
 
 # __main__ 변수는 모듈을 직접 실행하면 '__main__'이 되고, 임포트하면 모듈 이름이 됨
 if __name__ == '__main__':
