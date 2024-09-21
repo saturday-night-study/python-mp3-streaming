@@ -8,8 +8,8 @@ class MP3IO:
             return None
 
         try:
-            with open(path, "rb") as f:
-                return f
+            f = open(path, "rb")
+            return f
         except FileNotFoundError as e:
             print(f"파일을 찾을 수 없습니다: {e}")
             return None
