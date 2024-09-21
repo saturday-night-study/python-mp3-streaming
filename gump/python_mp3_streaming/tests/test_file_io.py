@@ -40,6 +40,10 @@ class TestFileIO(unittest.TestCase):
         self.__file_io.close()
         self.assertTrue(self.__file_io.closed)
 
+    def test_read(self):
+        read_bytes = 4
+        data: bytes = self.__file_io.read(read_bytes)
+        self.assertEquals(len(data), read_bytes)
 
 # __main__ 변수는 모듈을 직접 실행하면 '__main__'이 되고, 임포트하면 모듈 이름이 됨
 if __name__ == '__main__':
