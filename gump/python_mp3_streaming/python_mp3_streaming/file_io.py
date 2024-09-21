@@ -5,7 +5,7 @@ from typing import BinaryIO, Optional
 # https://peps.python.org/pep-0008/
 class FileIO:
     def __init__(self):
-        self.file: Optional[BinaryIO] = None
+        self.__file: Optional[BinaryIO] = None
 
     # 타입 힌트 추가
     def open(self, path: str) -> bool:
@@ -14,7 +14,7 @@ class FileIO:
             return False
 
         try:
-            self.file = open(path, "rb")
+            self.__file = open(path, "rb")
             return True
         except FileNotFoundError as e:
             print(f"파일을 찾을 수 없습니다: {e}")
@@ -27,16 +27,16 @@ class FileIO:
             return False
 
     def close(self):
-        if self.file.closed:
+        if self.__file.closed:
             return
 
         try:
-            self.file.close()
+            self.__file.close()
         except Exception as e:
             print(f"파일을 닫는 중 오류 발생: {e}")
 
-        self.file = None
+        self.__file = None
 
     @property
     def closed(self) -> bool:
-        return self.file is None
+        return self.__file is None
