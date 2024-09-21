@@ -1,3 +1,5 @@
+from typing import BinaryIO
+
 # PEP 8 정의에 따라서 클래스 네이밍
 # https://peps.python.org/pep-0008/
 class FileIO:
@@ -8,8 +10,8 @@ class FileIO:
             return None
 
         try:
-            f = open(path, "rb")
-            return f
+            file = open(path, "rb")
+            return file
         except FileNotFoundError as e:
             print(f"파일을 찾을 수 없습니다: {e}")
             return None
@@ -19,3 +21,9 @@ class FileIO:
         except Exception as e:
             print(f"알 수 없는 오류 발생: {e}")
             return None
+
+    def close(self, file: BinaryIO):
+        if file.closed:
+            return
+
+        file.close()
