@@ -13,5 +13,6 @@ class TestMP3Reader(unittest.TestCase):
         frame_header = reader.read_nth_frame_header(1)
         self.assertIsNotNone(frame_header)
 
+
 if __name__ == '__main__':
     unittest.main()

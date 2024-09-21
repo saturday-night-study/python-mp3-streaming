@@ -3,6 +3,7 @@ import unittest
 # PYTHONPATH=.. 으로 설정해야 패키지 import 가능
 from python_mp3_streaming.file_io import FileIO
 
+
 class TestFileIO(unittest.TestCase):
     # setUp 메서드는 각 테스트 메서드를 실행하기 전에 호출됨
     # setUp 메서드를 이용해서 중복된 초기화 작업을 줄임
@@ -38,6 +39,7 @@ class TestFileIO(unittest.TestCase):
 
         self.__file_io.close()
         self.assertTrue(self.__file_io.closed)
+
 
 # __main__ 변수는 모듈을 직접 실행하면 '__main__'이 되고, 임포트하면 모듈 이름이 됨
 if __name__ == '__main__':
