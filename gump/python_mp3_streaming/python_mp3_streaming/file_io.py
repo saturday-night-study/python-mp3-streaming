@@ -1,6 +1,6 @@
 # PEP 8 정의에 따라서 클래스 네이밍
 # https://peps.python.org/pep-0008/
-class MP3IO:
+class FileIO:
     # 타입 힌트 추가
     def open(self, path: str):
         if not isinstance(path, str):
