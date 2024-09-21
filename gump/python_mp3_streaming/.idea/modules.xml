@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/python-mp3-streaming.iml" filepath="$PROJECT_DIR$/.idea/python-mp3-streaming.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/python-mp3-streaming.iml" filepath="$PROJECT_DIR$/.idea/python_mp3_streaming.iml" />
     </modules>
   </component>
 </project>
