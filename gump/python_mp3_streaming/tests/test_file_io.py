@@ -33,7 +33,7 @@ class TestFileIO(unittest.TestCase):
         self.assertFalse(result)
 
     # 파일 객체를 닫는지 확인
-    def test_close_file(self):
+    def test_close(self):
         result = self.__file_io.open(self.__exists_input_path)
         self.assertIsNotNone(result)
 
