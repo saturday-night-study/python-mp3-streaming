@@ -19,23 +19,23 @@ class TestFileIO(unittest.TestCase):
     # 메서드명 변경
     # 존재하는 파일이 입력된 경우 파일 객체를 반환하는지 확인
     def test_open_exists_file(self):
-        result = self.__fio.open(self.__exists_input_path)
-        self.assertTrue(result)
+        self.__fio.open(self.__exists_input_path)
+        self.assertFalse(self.__fio.closed)
 
     # 존재하지 않는 파일이 입력된 경우 None을 반환하는지 확인
     def test_open_not_exists_file(self):
-        result = self.__fio.open(self.__not_exists_input_path)
-        self.assertFalse(result)
+        self.__fio.open(self.__not_exists_input_path)
+        self.assertTrue(self.__fio.closed)
 
     # 파일 경로가 문자열이 아닌 타입으로 입력된 경우 None을 반환하는지 확인
     def test_open_invalid_parameter_type(self):
-        result = self.__fio.open(123)
-        self.assertFalse(result)
+        self.__fio.open(123)
+        self.assertTrue(self.__fio.closed)
 
     # 파일 객체를 닫는지 확인
     def test_close(self):
-        result = self.__fio.open(self.__exists_input_path)
-        self.assertIsNotNone(result)
+        self.__fio.open(self.__exists_input_path)
+        self.assertFalse(self.__fio.closed)
 
         self.__fio.close()
         self.assertTrue(self.__fio.closed)

@@ -8,23 +8,23 @@ class FileIO:
         self.__file: Optional[BinaryIO] = None
 
     # 타입 힌트 추가
-    def open(self, path: str) -> bool:
+    def open(self, path: str):
         if not isinstance(path, str):
             print(f"입력된 파일 경로가 문자열이 아닙니다: path{type(path)}=[{path}]")
-            return False
+            return
 
         try:
             self.__file = open(path, "rb")
-            return True
+            return
         except FileNotFoundError as e:
             print(f"파일을 찾을 수 없습니다: {e}")
-            return False
+            return
         except IOError as e:
             print(f"파일을 열 수 없습니다: {e}")
             return False
         except Exception as e:
             print(f"알 수 없는 오류 발생: {e}")
-            return False
+            return
 
     def close(self):
         if self.__file.closed:
