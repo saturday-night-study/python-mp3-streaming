@@ -10,7 +10,7 @@ class TestFileIO(unittest.TestCase):
     def setUp(self):
         self.__exists_input_path = "./test_data/input.mp3"
         self.__not_exists_input_path = "./test_data/not_exists.mp3"
-        self.__file_io = FileIO()
+        self.__fio = FileIO()
 
     # 아래는 테스트 케이스
     # 테스트 케이스의 호출 순서는 정의 순서가 아닌 메서드 이름 알파벳 순서로 호출
@@ -19,30 +19,30 @@ class TestFileIO(unittest.TestCase):
     # 메서드명 변경
     # 존재하는 파일이 입력된 경우 파일 객체를 반환하는지 확인
     def test_open_exists_file(self):
-        result = self.__file_io.open(self.__exists_input_path)
+        result = self.__fio.open(self.__exists_input_path)
         self.assertTrue(result)
 
     # 존재하지 않는 파일이 입력된 경우 None을 반환하는지 확인
     def test_open_not_exists_file(self):
-        result = self.__file_io.open(self.__not_exists_input_path)
+        result = self.__fio.open(self.__not_exists_input_path)
         self.assertFalse(result)
 
     # 파일 경로가 문자열이 아닌 타입으로 입력된 경우 None을 반환하는지 확인
     def test_open_invalid_parameter_type(self):
-        result = self.__file_io.open(123)
+        result = self.__fio.open(123)
         self.assertFalse(result)
 
     # 파일 객체를 닫는지 확인
     def test_close(self):
-        result = self.__file_io.open(self.__exists_input_path)
+        result = self.__fio.open(self.__exists_input_path)
         self.assertIsNotNone(result)
 
-        self.__file_io.close()
-        self.assertTrue(self.__file_io.closed)
+        self.__fio.close()
+        self.assertTrue(self.__fio.closed)
 
     def test_read(self):
         read_bytes = 4
-        data: bytes = self.__file_io.read(read_bytes)
+        data: bytes = self.__fio.read(read_bytes)
         self.assertEquals(len(data), read_bytes)
 
 # __main__ 변수는 모듈을 직접 실행하면 '__main__'이 되고, 임포트하면 모듈 이름이 됨

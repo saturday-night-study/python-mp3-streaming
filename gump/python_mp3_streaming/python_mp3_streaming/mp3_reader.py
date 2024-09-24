@@ -6,7 +6,7 @@ from python_mp3_streaming.mp3_frame_header import MP3FrameHeader
 
 class MP3Reader:
     def __init__(self, file_io: FileIO):
-        self.__file: FileIO = file_io
+        self.__fio: FileIO = file_io
 
     def read_nth_frame_header(self, n: int) -> Optional[MP3FrameHeader]:
         if not isinstance(n, int):
