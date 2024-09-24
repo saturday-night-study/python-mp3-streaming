@@ -40,3 +40,7 @@ class FileIO:
     @property
     def closed(self) -> bool:
         return self.__file is None
+
+    def read(self, n: int) -> bytes:
+        data = self.__file.read(n)
+        return data

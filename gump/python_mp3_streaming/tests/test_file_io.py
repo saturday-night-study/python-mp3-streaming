@@ -22,6 +22,8 @@ class TestFileIO(unittest.TestCase):
         self.__fio.open(self.__exists_input_path)
         self.assertFalse(self.__fio.closed)
 
+        self.__fio.close()
+
     # 존재하지 않는 파일이 입력된 경우 None을 반환하는지 확인
     def test_open_not_exists_file(self):
         self.__fio.open(self.__not_exists_input_path)
@@ -35,15 +37,26 @@ class TestFileIO(unittest.TestCase):
     # 파일 객체를 닫는지 확인
     def test_close(self):
         self.__fio.open(self.__exists_input_path)
-        self.assertFalse(self.__fio.closed)
-
         self.__fio.close()
         self.assertTrue(self.__fio.closed)
 
     def test_read(self):
+        self.__fio.open(self.__exists_input_path)
+
         read_bytes = 4
         data: bytes = self.__fio.read(read_bytes)
-        self.assertEquals(len(data), read_bytes)
+        self.assertEqual(len(data), read_bytes)
+
+        self.__fio.close()
+
+    def test_read_under_read(self):
+        self.__fio.open(self.__exists_input_path)
+
+        read_bytes = 99999999999
+        data: bytes = self.__fio.read(read_bytes)
+        self.assertNotEqual(len(data), read_bytes)
+
+        self.__fio.close()
 
 # __main__ 변수는 모듈을 직접 실행하면 '__main__'이 되고, 임포트하면 모듈 이름이 됨
 if __name__ == '__main__':
