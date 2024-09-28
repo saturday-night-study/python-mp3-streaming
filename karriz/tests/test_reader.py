@@ -34,5 +34,12 @@ class MP3FileReaderTests(unittest.TestCase):
 
             self.mp3_file_reader.read()
 
+    # [성공] 정상 테스트 파일 읽기
+    def test_read_file(self): 
+        self.mp3_file_reader = mp3_file_reader.MP3FileReader("./assets/input.mp3")
+        
+        self.mp3_file_reader.read()
+        
+        self.assertIsNotNone(self.mp3_file_reader.mp3_file)
 if __name__ == '__main__':
    unittest.main()
