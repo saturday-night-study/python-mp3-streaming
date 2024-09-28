@@ -27,22 +27,8 @@ TDD는 말그대로 테스트 주도형 개발로, 개발 방법론 중 하나�
   + `Timely` : 단위 테스트는 실제 코드 구성 이전에 작성 되어야함
 ## Study Plan (1~4 Week)
 ### 1 Week
-#### MP3 파일 불러오기
-![Red](https://server.powerupstudio.eu/svg?c=%3Csvg%20width%3D%22100%22%20height%3D%2218%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ctext%20x%3D%2210%22%20y%3D%2218%22%20fill%3D%22%23f03056%22%3ERED%3C%2Ftext%3E%3C%2Fsvg%3E)  
-  + MP3가 아닌 다른 형태의 파일 읽기
-    - MP3 확장자만 다른 파일 읽기 
-    - MP3 확장자의 파일이지만 헤더 정보가 잘못 기록 된 파일 읽기
-
-![Green](https://server.powerupstudio.eu/svg?c=%3Csvg%20width%3D%22100%22%20height%3D%2218%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ctext%20x%3D%2210%22%20y%3D%2218%22%20fill%3D%22%235effaf%22%3EGREEN%3C%2Ftext%3E%3C%2Fsvg%3E)  
-
-  + Green
-
-![Refactor](https://server.powerupstudio.eu/svg?c=%3Csvg%20width%3D%22100%22%20height%3D%2218%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ctext%20x%3D%2210%22%20y%3D%2218%22%20fill%3D%22%23b077f2%22%3EREFACTOR%3C%2Ftext%3E%3C%2Fsvg%3E)  
-
-
-  + Refactor
-
-#### MP3 파일의 첫 프레임의 구조 출력
+1. MP3 파일 불러오기
+2. MP3 파일의 프레임의 구조 출력
 ### 2 Week
 3. 전체 프레임 수 조회
 4. MP3 전체 재생 시간 계산
