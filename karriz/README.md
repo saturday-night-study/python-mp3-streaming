@@ -28,6 +28,11 @@ TDD는 말그대로 테스트 주도형 개발로, 개발 방법론 중 하나�
 ## Study Plan (1~4 Week)
 ### 1 Week
 1. MP3 파일 불러오기
+  + constructor(filePath:string)  
+    특정 경로의 MP3 파일을 읽어온다
+
+  + read()  
+    특정 경로의 MP3 파일을 읽고 데이터를 변수에 적재
 2. MP3 파일의 프레임의 구조 출력
 ### 2 Week
 3. 전체 프레임 수 조회
