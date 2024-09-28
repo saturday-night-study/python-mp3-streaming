@@ -18,6 +18,8 @@ class MP3Reader:
             print(f"입력 파라미터 범위 오류: n{type(n)}=[{n}]")
             return None
 
+        # TODO: 현재 파일 포인터 위치를 모르기 때문에 파일 포인터 위치를 초기화 한 후 읽어야 함
+        # TODO: 4바이트를 읽는 것이 아니라 1바이트씩 이동하면서 찾아야 함
         data = self.__fio.read(FRAME_HEADER_SIZE)
         header = MP3FrameHeader(
             sync_word=self.__get_bits_from_bytes(data, SYNC_WORD_RANGE),
