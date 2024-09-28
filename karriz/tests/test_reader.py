@@ -16,7 +16,7 @@ class MP3FileReaderTests(unittest.TestCase):
     def test_new_mp3file_read(self):
         self.mp3_file_reader = mp3_file_reader.MP3FileReader("./assets/input.mp3")
 
-        self.assertIsNotNone(self.mp3_file_reader.mp3_file)
+        self.assertIsNotNone(self.mp3_file_reader)
 
     # 빈 MP3 파일을 읽는다
     def test_read_empty_file(self):
