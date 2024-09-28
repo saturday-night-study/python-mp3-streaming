@@ -11,7 +11,7 @@ class FileStreamNotLoadedError(Exception):
 
 class MP3FileReader:
     def __init__(self, filename:str):
-        self.mp3_file_stream = ConstBitStream(filename)
+        self.mp3_file_stream = ConstBitStream(filename=filename)
 
     def read(self) -> None:
         if self.mp3_file_stream is None:
