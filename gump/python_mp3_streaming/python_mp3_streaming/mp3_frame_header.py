@@ -16,7 +16,11 @@ class MP3FrameHeader:
     copyright: int
     original: int
     emphasis: int
-    
+
+    @property
+    def is_valid_frame(self):
+        return self.sync_word == 0b11111111111 and self.version == 0b11 and self.layer == 0b01
+
     def __repr__(self):
         return f"MP3FrameHeader(sync_word={self.sync_word}, version={self.version}, layer={self.layer}, " \
                f"protection_bit={self.protection_bit}, bitrate_index={self.bitrate_index}, " \
