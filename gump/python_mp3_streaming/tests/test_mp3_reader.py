@@ -8,16 +8,22 @@ class TestMP3Reader(unittest.TestCase):
     def setUp(self):
         self.__exists_input_path = "./test_data/input.mp3"
         self.__fio = FileIO()
+        self.__fio.open(self.__exists_input_path)
+
+    def tearDown(self):
+        self.__fio.close()
 
     def test_read_first_frame_header(self):
         reader = MP3Reader(self.__fio)
-        frame_header = reader.read_nth_frame_header(0)
-        self.assertIsNotNone(frame_header)
+        header = reader.read_nth_frame_header(0)
+        self.assertIsNotNone(header)
+
+        print(header)
 
     def test_read_nth_frame_header_invalid_parameter(self):
         reader = MP3Reader(self.__fio)
-        frame_header = reader.read_nth_frame_header(-1)
-        self.assertIsNone(frame_header)
+        header = reader.read_nth_frame_header(-1)
+        self.assertIsNone(header)
 
 
 if __name__ == '__main__':
