@@ -39,6 +39,9 @@ class FileIO:
         return self.__file is None or self.__file.closed
 
     def read(self, n: int) -> bytes:
+        if self.closed:
+            raise IOError("파일이 닫혀 있습니다.")
+
         data = self.__file.read(n)
         data_length = len(data)
         if data_length == 0:

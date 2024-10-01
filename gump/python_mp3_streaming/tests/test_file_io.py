@@ -52,6 +52,10 @@ class TestFileIO(unittest.TestCase):
         data: bytes = self.__fio.read(read_bytes)
         self.assertEqual(len(data), read_bytes)
 
+    def test_read_closed_file(self):
+        read_bytes = 1
+        self.assertRaises(IOError, self.__fio.read, read_bytes)
+
     def test_read_eof(self):
         self.__fio.open(self.__empty_input_path)
 
