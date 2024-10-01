@@ -27,14 +27,16 @@ class MP3FrameHeader:
                 and self.layer == LAYER_THREE
         )
 
-    def __repr__(self):
-        return (
-            f"MP3FrameHeader(sync_word={self.sync_word}, version={self.version}, layer={self.layer}, "
-            f"protection_bit={self.protection_bit}, bitrate_index={self.bitrate_index}, "
-            f"sampling_rate={self.sampling_rate}, padding_bit={self.padding_bit}, private_bit={self.private_bit}, "
-            f"channel_mode={self.channel_mode}, mode_extension={self.mode_extension}, copyright={self.copyright}, "
-            f"original={self.original}, emphasis={self.emphasis})"
-        )
+    # 데이타 클래스를 사용할때 __repr__ 메서드는 자동 생성되기 때문에 아래 코드를 주석 처리
+    # 학습 목적을 위해서 주석을 남겨 놓음
+    # def __repr__(self):
+    #     return (
+    #         f"MP3FrameHeader(sync_word={self.sync_word}, version={self.version}, layer={self.layer}, "
+    #         f"protection_bit={self.protection_bit}, bitrate_index={self.bitrate_index}, "
+    #         f"sampling_rate={self.sampling_rate}, padding_bit={self.padding_bit}, private_bit={self.private_bit}, "
+    #         f"channel_mode={self.channel_mode}, mode_extension={self.mode_extension}, copyright={self.copyright}, "
+    #         f"original={self.original}, emphasis={self.emphasis})"
+    #     )
 
     def __str__(self):
         version_desc = VERSION_ITEMS.get(self.version, "Unknown")
