@@ -20,7 +20,7 @@ class MP3FrameHeader:
     emphasis: int
 
     @property
-    def is_valid_frame(self):
+    def is_valid_frame(self) -> bool:
         return (
                 self.sync_word == SYNC_WORD
                 and self.version == MPEG_VERSION_ONE
