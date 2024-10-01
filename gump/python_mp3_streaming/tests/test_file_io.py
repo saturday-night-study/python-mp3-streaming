@@ -11,6 +11,7 @@ class TestFileIO(unittest.TestCase):
         self.__exists_input_path = "./test_data/input.mp3"
         self.__not_exists_input_path = "./test_data/not_exists.mp3"
         self.__empty_input_path = "./test_data/empty.mp3"
+        self.__directory_input_path = "./test_data"
         self.__fio = FileIO()
 
     def tearDown(self):
@@ -26,15 +27,17 @@ class TestFileIO(unittest.TestCase):
         self.__fio.open(self.__exists_input_path)
         self.assertFalse(self.__fio.closed)
 
-    # 존재하지 않는 파일이 입력된 경우 None을 반환하는지 확인
+    # 존재하지 않는 파일이 입력된 경우 Error를 발생시키는지 확인
     def test_open_not_exists_file(self):
-        self.__fio.open(self.__not_exists_input_path)
-        self.assertTrue(self.__fio.closed)
+        self.assertRaises(FileNotFoundError, self.__fio.open, self.__not_exists_input_path)
 
-    # 파일 경로가 문자열이 아닌 타입으로 입력된 경우 None을 반환하는지 확인
+    # 파일 경로가 문자열이 아닌 타입으로 입력된 경우 Error를 발생시키는지 확인
     def test_open_invalid_parameter_type(self):
-        self.__fio.open(123)
-        self.assertTrue(self.__fio.closed)
+        self.assertRaises(ValueError, self.__fio.open, 123)
+
+    # 파일 경로가 디렉터리일 경우 Error를 발생시키는지 확인
+    def test_open_directory(self):
+        self.assertRaises(IsADirectoryError, self.__fio.open, self.__directory_input_path)
 
     # 파일 객체를 닫는지 확인
     def test_close(self):
