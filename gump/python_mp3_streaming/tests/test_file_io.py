@@ -10,7 +10,11 @@ class TestFileIO(unittest.TestCase):
     def setUp(self):
         self.__exists_input_path = "./test_data/input.mp3"
         self.__not_exists_input_path = "./test_data/not_exists.mp3"
+        self.__empty_input_path = "./test_data/empty.mp3"
         self.__fio = FileIO()
+
+    def tearDown(self):
+        self.__fio.close()
 
     # 아래는 테스트 케이스
     # 테스트 케이스의 호출 순서는 정의 순서가 아닌 메서드 이름 알파벳 순서로 호출
@@ -21,8 +25,6 @@ class TestFileIO(unittest.TestCase):
     def test_open_exists_file(self):
         self.__fio.open(self.__exists_input_path)
         self.assertFalse(self.__fio.closed)
-
-        self.__fio.close()
 
     # 존재하지 않는 파일이 입력된 경우 None을 반환하는지 확인
     def test_open_not_exists_file(self):
@@ -47,16 +49,12 @@ class TestFileIO(unittest.TestCase):
         data: bytes = self.__fio.read(read_bytes)
         self.assertEqual(len(data), read_bytes)
 
-        self.__fio.close()
+    def test_read_eof(self):
+        self.__fio.open(self.__empty_input_path)
 
-    def test_read_under_read(self):
-        self.__fio.open(self.__exists_input_path)
+        read_bytes = 1
+        self.assertRaises(EOFError, self.__fio.read, read_bytes)
 
-        read_bytes = 99999999999
-        data: bytes = self.__fio.read(read_bytes)
-        self.assertNotEqual(len(data), read_bytes)
-
-        self.__fio.close()
 
 # __main__ 변수는 모듈을 직접 실행하면 '__main__'이 되고, 임포트하면 모듈 이름이 됨
 if __name__ == '__main__':

@@ -27,7 +27,7 @@ class FileIO:
             return
 
     def close(self):
-        if self.__file.closed:
+        if self.__file is None or self.__file.closed:
             return
 
         try:
@@ -43,4 +43,8 @@ class FileIO:
 
     def read(self, n: int) -> bytes:
         data = self.__file.read(n)
+        data_length = len(data)
+        if data_length == 0:
+            raise EOFError(f"EOF 오류 발생")
+
         return data
