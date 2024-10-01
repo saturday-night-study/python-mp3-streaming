@@ -31,8 +31,8 @@ class FileIO:
             self.__file.close()
         except Exception as e:
             raise Exception(f"파일을 닫는 중 오류 발생: {e}")
-
-        self.__file = None
+        finally:
+            self.__file = None
 
     @property
     def closed(self) -> bool:
