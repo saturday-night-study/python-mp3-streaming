@@ -28,11 +28,13 @@ class MP3FrameHeader:
         )
 
     def __repr__(self):
-        return f"MP3FrameHeader(sync_word={self.sync_word}, version={self.version}, layer={self.layer}, " \
-               f"protection_bit={self.protection_bit}, bitrate_index={self.bitrate_index}, " \
-               f"sampling_rate={self.sampling_rate}, padding_bit={self.padding_bit}, private_bit={self.private_bit}, " \
-               f"channel_mode={self.channel_mode}, mode_extension={self.mode_extension}, copyright={self.copyright}, " \
-               f"original={self.original}, emphasis={self.emphasis})"
+        return (
+            f"MP3FrameHeader(sync_word={self.sync_word}, version={self.version}, layer={self.layer}, "
+            f"protection_bit={self.protection_bit}, bitrate_index={self.bitrate_index}, "
+            f"sampling_rate={self.sampling_rate}, padding_bit={self.padding_bit}, private_bit={self.private_bit}, "
+            f"channel_mode={self.channel_mode}, mode_extension={self.mode_extension}, copyright={self.copyright}, "
+            f"original={self.original}, emphasis={self.emphasis})"
+        )
 
     def __str__(self):
         version_desc = VERSION_ITEMS.get(self.version, "Unknown")
@@ -47,20 +49,22 @@ class MP3FrameHeader:
         emphasis_desc = EMPHASIS_ITEMS.get(self.emphasis, "Unknown")
 
         field_width = 20
-        return f"{"-" * (field_width * 2)}\n" \
-               f"{'Field':<{field_width}} {'Value':<{field_width}}\n" \
-               f"{"-" * (field_width * 2)}\n" \
-               f"{'Sync Word':<{field_width}} {self.sync_word:b}\n" \
-               f"{'Version':<{field_width}} {version_desc}\n" \
-               f"{'Layer':<{field_width}} {layer_desc}\n" \
-               f"{'Protection bit':<{field_width}} {protection_bit_desc}\n" \
-               f"{'Bitrate Index':<{field_width}} {bitrate_desc}\n" \
-               f"{'Sampling Rate':<{field_width}} {sampling_rate_desc}\n" \
-               f"{'Padding Bit':<{field_width}} {padding_bit_desc}\n" \
-               f"{'Private Bit':<{field_width}} {self.private_bit}\n" \
-               f"{'Channel Mode':<{field_width}} {channel_mode_desc}\n" \
-               f"{'Mode Extension':<{field_width}} {self.mode_extension}\n" \
-               f"{'Copyright':<{field_width}} {copyright_desc}\n" \
-               f"{'Original':<{field_width}} {original_desc}\n" \
-               f"{'Emphasis':<{field_width}} {emphasis_desc}\n" \
-               f"{"-" * (field_width * 2)}\n"
+        return (
+            f"{"-" * (field_width * 2)}\n"
+            f"{'Field':<{field_width}} {'Value':<{field_width}}\n"
+            f"{"-" * (field_width * 2)}\n"
+            f"{'Sync Word':<{field_width}} {self.sync_word:b}\n"
+            f"{'Version':<{field_width}} {version_desc}\n"
+            f"{'Layer':<{field_width}} {layer_desc}\n"
+            f"{'Protection bit':<{field_width}} {protection_bit_desc}\n"
+            f"{'Bitrate Index':<{field_width}} {bitrate_desc}\n"
+            f"{'Sampling Rate':<{field_width}} {sampling_rate_desc}\n"
+            f"{'Padding Bit':<{field_width}} {padding_bit_desc}\n"
+            f"{'Private Bit':<{field_width}} {self.private_bit}\n"
+            f"{'Channel Mode':<{field_width}} {channel_mode_desc}\n"
+            f"{'Mode Extension':<{field_width}} {self.mode_extension}\n"
+            f"{'Copyright':<{field_width}} {copyright_desc}\n"
+            f"{'Original':<{field_width}} {original_desc}\n"
+            f"{'Emphasis':<{field_width}} {emphasis_desc}\n"
+            f"{"-" * (field_width * 2)}\n"
+        )
