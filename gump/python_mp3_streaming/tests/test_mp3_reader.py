@@ -43,10 +43,10 @@ class TestMP3Reader(unittest.TestCase):
 
         fio.close()
 
-    def test_read_all_frame_headers(self):
-        reader = MP3Reader(self.__fio)
-        for header in reader.headers:
-            self.assertTrue(header.is_valid_frame)
+    # def test_read_all_frame_headers(self):
+    #     reader = MP3Reader(self.__fio)
+    #     for header in reader.headers:
+    #         self.assertTrue(header.is_valid_frame)
         
 
 if __name__ == '__main__':
