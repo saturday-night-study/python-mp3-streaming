@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from python_mp3_streaming.mp3_frame_header_spec import *
 
 
-@dataclass
+@dataclass(frozen=True)
 class MP3FrameHeader:
     sync_word: int
     version: int
