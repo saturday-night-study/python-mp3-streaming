@@ -34,9 +34,6 @@ class TestMP3Reader(unittest.TestCase):
         reader = MP3Reader(fio)
         header = reader.read_nth_frame_header(0)
         self.assertIsNotNone(header)
-
-        print(header)
-
         self.assertFalse(header.is_valid_frame)
 
         fio.close()

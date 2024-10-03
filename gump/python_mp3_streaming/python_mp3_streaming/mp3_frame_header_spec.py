@@ -24,6 +24,7 @@ EMPHASIS_RANGE = FrameHeaderRange(30, 2)
 
 SYNC_WORD: Final[int] = 0b11111111111
 MPEG_VERSION_ONE: Final[int] = 0b11
+MPEG_VERSION_ONE_MULTIPLIER: Final[int] = 144
 LAYER_THREE: Final[int] = 0b01
 
 VERSION_ITEMS: Final[Dict[int, str]] = {

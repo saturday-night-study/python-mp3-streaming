@@ -49,6 +49,7 @@ class MP3FrameHeader:
         copyright_desc = COPYRIGHT_ITEMS.get(self.copyright, "Unknown")
         original_desc = ORIGINAL_ITEMS.get(self.original, "Unknown")
         emphasis_desc = EMPHASIS_ITEMS.get(self.emphasis, "Unknown")
+        audio_data_length = self.audio_data_length
 
         field_width = 20
         return (
@@ -69,4 +70,14 @@ class MP3FrameHeader:
             f"{'Original':<{field_width}} {original_desc}\n"
             f"{'Emphasis':<{field_width}} {emphasis_desc}\n"
             f"{"-" * (field_width * 2)}\n"
+            f"{'Audio Data Length':<{field_width}} {audio_data_length}\n"
+            f"{"-" * (field_width * 2)}\n"
         )
+
+    @property
+    def audio_data_length(self) -> int:
+        # http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm
+        # FrameLengthInBytes = 144 * BitRate / SampleRate + Padding
+        bitrate = BITRATE_ITEMS.get(self.bitrate_index, 0) * 1000
+        sample_rate = SAMPLING_RATE_ITEMS.get(self.sampling_rate, 0)
+        return int(MPEG_VERSION_ONE_MULTIPLIER * bitrate / sample_rate) + self.padding_bit
