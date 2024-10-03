@@ -26,6 +26,7 @@ SYNC_WORD: Final[int] = 0b11111111111
 MPEG_VERSION_ONE: Final[int] = 0b11
 MPEG_VERSION_ONE_MULTIPLIER: Final[int] = 144
 LAYER_THREE: Final[int] = 0b01
+LAYER_THREE_SAMPLES: Final[int] = 1152
 
 VERSION_ITEMS: Final[Dict[int, str]] = {
     0b00: "MPEG 2.5",

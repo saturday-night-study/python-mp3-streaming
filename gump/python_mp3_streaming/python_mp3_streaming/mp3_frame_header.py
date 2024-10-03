@@ -50,6 +50,7 @@ class MP3FrameHeader:
         original_desc = ORIGINAL_ITEMS.get(self.original, "Unknown")
         emphasis_desc = EMPHASIS_ITEMS.get(self.emphasis, "Unknown")
         audio_data_length = self.audio_data_length
+        audio_data_duration = self.audio_data_duration
 
         field_width = 20
         return (
@@ -71,6 +72,7 @@ class MP3FrameHeader:
             f"{'Emphasis':<{field_width}} {emphasis_desc}\n"
             f"{"-" * (field_width * 2)}\n"
             f"{'Audio Data Length':<{field_width}} {audio_data_length}\n"
+            f"{'Audio Data Duration':<{field_width}} {audio_data_duration}\n"
             f"{"-" * (field_width * 2)}\n"
         )
 
@@ -81,3 +83,9 @@ class MP3FrameHeader:
         bitrate = BITRATE_ITEMS.get(self.bitrate_index, 0) * 1000
         sample_rate = SAMPLING_RATE_ITEMS.get(self.sampling_rate, 0)
         return int(MPEG_VERSION_ONE_MULTIPLIER * bitrate / sample_rate) + self.padding_bit
+
+    @property
+    def audio_data_duration(self) -> float:
+        # Duration = Layer 3 Samples(1152) / SampleRate
+        sample_rate = SAMPLING_RATE_ITEMS.get(self.sampling_rate, 0)
+        return LAYER_THREE_SAMPLES / sample_rate
