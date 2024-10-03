@@ -46,6 +46,14 @@ class TestMP3Reader(unittest.TestCase):
         # TODO: 계산해보지 않으면 오디오 프레임 길이를 알 수 없는데 테스트 코드를 어떻게 작성하지?
         self.assertGreater(audio_data_length, 0)
 
+    def test_audio_data_duration(self):
+        reader = MP3Reader(self.__fio)
+        header = reader.read_nth_frame_header(0)
+        audio_data_duration = header.audio_data_duration
+
+        # TODO: 계산해보지 않으면 오디오 오디오 재생시간을 알 수 없는데 테스트 코드를 어떻게 작성하지?
+        self.assertGreater(audio_data_duration, 0)
+
     # def test_read_all_frame_headers(self):
     #     reader = MP3Reader(self.__fio)
     #     for header in reader.headers:
