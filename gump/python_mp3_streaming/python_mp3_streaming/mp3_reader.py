@@ -47,3 +47,13 @@ class MP3Reader:
         mask = (1 << range.length) - 1
 
         return (int_data >> shift_length) & mask
+
+    @property
+    def headers(self) -> 'MP3Reader':
+        return self
+
+    def __iter__(self):
+        return self
+
+    def __next__(self):
+        raise StopIteration()

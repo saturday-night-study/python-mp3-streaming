@@ -54,10 +54,10 @@ class TestMP3Reader(unittest.TestCase):
         # TODO: 계산해보지 않으면 오디오 오디오 재생시간을 알 수 없는데 테스트 코드를 어떻게 작성하지?
         self.assertGreater(audio_data_duration, 0)
 
-    # def test_read_all_frame_headers(self):
-    #     reader = MP3Reader(self.__fio)
-    #     for header in reader.headers:
-    #         self.assertTrue(header.is_valid_frame)
+    def test_read_all_frame_headers(self):
+        reader = MP3Reader(self.__fio)
+        for header in reader.headers:
+            self.assertTrue(header.is_valid_frame)
         
 
 if __name__ == '__main__':
