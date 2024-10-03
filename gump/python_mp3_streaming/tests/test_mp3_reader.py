@@ -7,8 +7,7 @@ from python_mp3_streaming.mp3_reader import MP3Reader
 class TestMP3Reader(unittest.TestCase):
     def setUp(self):
         self.__exists_input_path = "./test_data/input.mp3"
-        self.__fio = FileIO()
-        self.__fio.open(self.__exists_input_path)
+        self.__fio = FileIO(self.__exists_input_path)
 
     def tearDown(self):
         self.__fio.close()
@@ -30,8 +29,7 @@ class TestMP3Reader(unittest.TestCase):
 
     def test_read_nth_frame_header_invalid_format(self):
         invalid_format_input_path = "./test_data/invalid_format.jpg"
-        fio = FileIO()
-        fio.open(invalid_format_input_path)
+        fio = FileIO(invalid_format_input_path)
 
         reader = MP3Reader(fio)
         header = reader.read_nth_frame_header(0)
