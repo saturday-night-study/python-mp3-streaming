@@ -38,7 +38,7 @@ class TestMP3Reader(unittest.TestCase):
 
         fio.close()
 
-    def test_frame_length(self):
+    def test_audio_data_length(self):
         reader = MP3Reader(self.__fio)
         header = reader.read_nth_frame_header(0)
         audio_data_length = header.audio_data_length
