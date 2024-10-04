@@ -81,6 +81,12 @@ class TestFileIO(unittest.TestCase):
         fio.read(read_bytes)
         self.assertEqual(fio.current_position, read_bytes)
 
+    def test_skip(self):
+        fio = FileIO(self.__exists_input_path)
+        skip_bytes = 4
+        fio.skip(skip_bytes)
+        self.assertEqual(fio.current_position, skip_bytes)
+
 # __main__ 변수는 모듈을 직접 실행하면 '__main__'이 되고, 임포트하면 모듈 이름이 됨
 if __name__ == '__main__':
     unittest.main()
