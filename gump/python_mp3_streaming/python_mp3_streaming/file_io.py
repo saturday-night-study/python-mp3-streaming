@@ -6,15 +6,15 @@ from typing import BinaryIO, Optional
 class FileIO:
     def __init__(self, path: str):
         self.__file: Optional[BinaryIO] = None
-        self.__open(path)
+        self.__file = FileIO.__open(path)
 
-    # 타입 힌트 추가
-    def __open(self, path: str):
+    @staticmethod
+    def __open(path: str) -> BinaryIO:
         if not isinstance(path, str):
             raise ValueError(f"입력된 파일 경로가 문자열이 아닙니다: path{type(path)}=[{path}]")
 
         try:
-            self.__file = open(path, "rb")
+            return open(path, "rb")
         except FileNotFoundError as e:
             raise FileNotFoundError(f"파일을 찾을 수 없습니다: {e}")
         except IsADirectoryError as e:
