@@ -12,6 +12,7 @@ class TestFileIO(unittest.TestCase):
         self.__not_exists_input_path = "./test_data/not_exists.mp3"
         self.__empty_input_path = "./test_data/empty.mp3"
         self.__directory_input_path = "./test_data"
+        self.__exists_input_file_size = 9375481
 
     # 아래는 테스트 케이스
     # 테스트 케이스의 호출 순서는 정의 순서가 아닌 메서드 이름 알파벳 순서로 호출
@@ -63,7 +64,14 @@ class TestFileIO(unittest.TestCase):
 
     def test_file_size(self):
         fio = FileIO(self.__exists_input_path)
-        self.assertEqual(fio.file_size, 9375481)
+        self.assertEqual(fio.file_size, self.__exists_input_file_size)
+
+    def test_has_remain_bytes(self):
+        fio = FileIO(self.__exists_input_path)
+        self.assertTrue(fio.has_remain_bytes)
+
+        fio.read(self.__exists_input_file_size)
+        self.assertFalse(fio.has_remain_bytes)
 
 # __main__ 변수는 모듈을 직접 실행하면 '__main__'이 되고, 임포트하면 모듈 이름이 됨
 if __name__ == '__main__':
