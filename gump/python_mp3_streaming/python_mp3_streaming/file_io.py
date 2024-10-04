@@ -42,6 +42,19 @@ class FileIO:
     def closed(self) -> bool:
         return self.__file is None or self.__file.closed
 
+    @property
+    def file_size(self) -> int:
+        if self.closed:
+            return 0
+
+        # https://docs.python.org/3/library/io.html#io.IOBase.seek
+        current_position = self.__file.tell()
+        self.__file.seek(0, 2)
+        last_position = self.__file.tell()
+        self.__file.seek(current_position, 0)
+
+        return last_position - current_position
+
     def read(self, n: int) -> bytes:
         if self.closed:
             raise IOError("파일이 닫혀 있습니다.")
