@@ -73,6 +73,14 @@ class TestFileIO(unittest.TestCase):
         fio.read(self.__exists_input_file_size)
         self.assertFalse(fio.has_remain_bytes)
 
+    def test_current_position(self):
+        fio = FileIO(self.__exists_input_path)
+        self.assertEqual(fio.current_position, 0)
+
+        read_bytes = 4
+        fio.read(read_bytes)
+        self.assertEqual(fio.current_position, read_bytes)
+
 # __main__ 변수는 모듈을 직접 실행하면 '__main__'이 되고, 임포트하면 모듈 이름이 됨
 if __name__ == '__main__':
     unittest.main()
