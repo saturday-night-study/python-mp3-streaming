@@ -57,10 +57,16 @@ class FileIO:
 
     @property
     def has_remain_bytes(self) -> bool:
+        if self.closed:
+            return False
+
         return self.file_size > self.__file.tell()
 
     @property
     def current_position(self) -> int:
+        if self.closed:
+            raise IOError("파일이 닫혀 있습니다.")
+        
         return self.__file.tell()
 
     def read(self, n: int) -> bytes:
@@ -73,3 +79,9 @@ class FileIO:
             raise EOFError()
 
         return data
+
+    def skip(self, n: int):
+        if self.closed:
+            raise IOError("파일이 닫혀 있습니다.")
+
+        self.__file.seek(n, 1)
