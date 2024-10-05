@@ -31,11 +31,11 @@ class MP3FileReader:
         self.mp3_file = None
         self.mp3_file_stream = ConstBitStream(filename=filename)
 
-    def read(self) -> None:
+    def parse(self) -> MP3File:
         if self.mp3_file_stream is None:
             raise FileStreamNotLoadedError
 
-        self.mp3_file = MP3File()
+        mp3_file = MP3File()
 
         # Read freamSync: 11bits
         readFrame = self.mp3_file_stream.read(11).uint
@@ -43,64 +43,66 @@ class MP3FileReader:
         if readFrame != FRAME_SYNC_BITS:
             raise InvalidFrameSyncError
 
-        self.mp3_file.frameSync = readFrame
+        mp3_file.frameSync = readFrame
         
         # Read version: 2bits
         readFrame = self.mp3_file_stream.read(2).uint
 
-        self.mp3_file.version = readFrame
+        mp3_file.version = readFrame
 
         # Read layer: 2bits
         readFrame = self.mp3_file_stream.read(2).uint
 
-        self.mp3_file.layer = readFrame
+        mp3_file.layer = readFrame
 
         # Read protection: 1bit
         readFrame = self.mp3_file_stream.read(1).uint
 
-        self.mp3_file.protection = readFrame
+        mp3_file.protection = readFrame
 
         # Read bitrate: 4bits
         readFrame = self.mp3_file_stream.read(4).uint
 
-        self.mp3_file.bitrate = readFrame
+        mp3_file.bitrate = readFrame
 
         # Read samplingRateFreq: 2bits
         readFrame = self.mp3_file_stream.read(2).uint
 
-        self.mp3_file.samplingRateFreq = readFrame
+        mp3_file.samplingRateFreq = readFrame
 
         # Read padding: 1bit
         readFrame = self.mp3_file_stream.read(1).uint
 
-        self.mp3_file.padding = readFrame
+        mp3_file.padding = readFrame
 
         # Read private: 1bit
         readFrame = self.mp3_file_stream.read(1).uint
 
-        self.mp3_file.private = readFrame
+        mp3_file.private = readFrame
 
         # Read channelMode: 2bits
         readFrame = self.mp3_file_stream.read(2).uint
 
-        self.mp3_file.channelMode = readFrame
+        mp3_file.channelMode = readFrame
 
         # Read modeExtension: 2bits
         readFrame = self.mp3_file_stream.read(2).uint
 
-        self.mp3_file.modeExtension = readFrame
+        mp3_file.modeExtension = readFrame
 
         # Read copyright: 1bit
         readFrame = self.mp3_file_stream.read(1).uint
 
-        self.mp3_file.copyright = readFrame
+        mp3_file.copyright = readFrame
 
         # Read original: 1bit
         readFrame = self.mp3_file_stream.read(1).uint
 
-        self.mp3_file.original = readFrame
+        mp3_file.original = readFrame
 
         # Read emphasis: 2bits
         readFrame = self.mp3_file_stream.read(2).uint
 
-        self.mp3_file.emphasis = readFrame
+        mp3_file.emphasis = readFrame
+
+        return mp3_file

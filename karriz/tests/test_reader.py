@@ -20,27 +20,28 @@ class MP3FileReaderTests(unittest.TestCase):
 
         self.assertIsNotNone(self.mp3_file_reader)
 
-    # [실패] 빈 MP3 파일을 읽는다
-    def test_read_empty_file(self):
+    # [실패] 빈 MP3 파일을 파싱한다.
+    def test_parse_empty_file(self):
         with self.assertRaises(ValueError):
             self.mp3_file_reader = mp3_file_reader.MP3FileReader("./assets/empty.mp3")
         
-            self.mp3_file_reader.read()
+            mp3_file = self.mp3_file_reader.parse()
+            print(mp3_file)
 
-    # [실패] 잘못된 헤더 타입을 가진 파일을 읽는다
-    def test_read_wrong_file(self):
+    # [실패] 잘못된 헤더 타입을 가진 파일을 파싱한다.
+    def test_parse_wrong_file(self):
         with self.assertRaises(InvalidFrameSyncError):
             self.mp3_file_reader = mp3_file_reader.MP3FileReader("./assets/wrong.mp3")
 
-            self.mp3_file_reader.read()
+            mp3_file = self.mp3_file_reader.parse()
+            print(mp3_file)
 
-    # [성공] 정상 테스트 파일 읽기
-    def test_read_file(self): 
+    # [성공] 정상 테스트 MP3File 파싱
+    def test_parse_file(self): 
         self.mp3_file_reader = mp3_file_reader.MP3FileReader("./assets/input.mp3")
         
-        self.mp3_file_reader.read()
+        mp3_file = self.mp3_file_reader.parse()
+        print(mp3_file)
 
-        self.assertIsNotNone(self.mp3_file_reader.mp3_file)
-        print(self.mp3_file_reader.mp3_file)
 if __name__ == '__main__':
    unittest.main()
