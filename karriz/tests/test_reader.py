@@ -25,16 +25,14 @@ class MP3FileReaderTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.mp3_file_reader = mp3_file_reader.MP3FileReader("./assets/empty.mp3")
         
-            mp3_file = self.mp3_file_reader.parse()
-            print(mp3_file)
+            self.mp3_file_reader.parse()
 
     # [실패] 잘못된 헤더 타입을 가진 파일을 파싱한다.
     def test_parse_wrong_file(self):
         with self.assertRaises(InvalidFrameSyncError):
             self.mp3_file_reader = mp3_file_reader.MP3FileReader("./assets/wrong.mp3")
 
-            mp3_file = self.mp3_file_reader.parse()
-            print(mp3_file)
+            self.mp3_file_reader.parse()
 
     # [성공] 정상 테스트 MP3File 파싱
     def test_parse_file(self): 
