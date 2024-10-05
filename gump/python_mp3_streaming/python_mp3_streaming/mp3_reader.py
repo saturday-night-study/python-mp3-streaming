@@ -1,26 +1,14 @@
 from typing import Optional
 
+from python_mp3_streaming.end_of_mp3_frame_error import EndOfMP3FrameError
 from python_mp3_streaming.file_io import FileIO
 from python_mp3_streaming.mp3_frame_header import MP3FrameHeader
 from python_mp3_streaming.mp3_frame_header_spec import *
 
 
 class MP3Reader:
-
     def __init__(self, file_io: FileIO):
         self.__fio: FileIO = file_io
-
-    def read_nth_frame_header(self, n: int) -> Optional[MP3FrameHeader]:
-        if not isinstance(n, int):
-            print(f"입력 파라미터 타입 오류: n{type(n)}=[{n}]")
-            return None
-        elif n < 0:
-            print(f"입력 파라미터 범위 오류: n{type(n)}=[{n}]")
-            return None
-
-        header = self.__read_frame_header()
-
-        return header
 
     def __read_frame_header(self) -> Optional[MP3FrameHeader]:
         if self.__fio.closed:
@@ -31,7 +19,7 @@ class MP3Reader:
             position = self.__fio.current_position
             data = self.__fio.read(FRAME_HEADER_SIZE)
             if len(data) < FRAME_HEADER_SIZE:
-                raise EOFError()
+                raise EndOfMP3FrameError()
 
             header = MP3Reader.__parse_header(position, data)
             if header.is_valid_frame:
