@@ -4,9 +4,9 @@ from typing import BinaryIO, Optional
 # PEP 8 정의에 따라서 클래스 네이밍
 # https://peps.python.org/pep-0008/
 class FileIO:
-    def __init__(self, path: str):
+    def __init__(self, path: str, mode: str = "rb"):
         self.__file: Optional[BinaryIO] = None
-        self.__file = FileIO.__open(path)
+        self.__file = FileIO.__open(path, mode)
 
         # https://docs.python.org/3/library/io.html#io.IOBase.seek
         current_position = self.__file.tell()
@@ -16,12 +16,12 @@ class FileIO:
         self.__file_size = last_position - current_position
 
     @staticmethod
-    def __open(path: str) -> BinaryIO:
+    def __open(path: str, mode: str) -> BinaryIO:
         if not isinstance(path, str):
             raise ValueError(f"입력된 파일 경로가 문자열이 아닙니다: path{type(path)}=[{path}]")
 
         try:
-            return open(path, "rb")
+            return open(path, mode)
         except FileNotFoundError as e:
             raise FileNotFoundError(f"파일을 찾을 수 없습니다: {e}")
         except IsADirectoryError as e:
@@ -92,3 +92,10 @@ class FileIO:
             raise IOError("파일이 닫혀 있습니다.")
 
         self.__file.seek(0, 0)
+
+    def write(self, data: bytes):
+        if self.closed:
+            raise IOError("파일이 닫혀 있습니다.")
+
+        self.__file.write(data)
+        self.__file_size += len(data)
