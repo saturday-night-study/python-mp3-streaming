@@ -35,7 +35,9 @@ class TestMp3Calc(unittest.TestCase):
         mp3.set_frame_size()
         mp3.set_frame_count()
         mp3.set_play_time()
+        mp3_play_time = mp3.get_play_time()
 
+        self.assertEqual(mp3_play_time, 234.5795918367347)
 
 if __name__ == '__main__':
     unittest.main()

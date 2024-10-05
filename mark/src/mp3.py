@@ -3,6 +3,7 @@ import mp3_header_factory
 
 class MP3:
     def __init__(self, file_reader):
+        self.play_time = None
         self.frame_size = 0
         self.frame_count = 0
         self.header = None
@@ -28,3 +29,9 @@ class MP3:
     def get_frame_count(self):
         return self.set_frame_count
 
+    def set_play_time(self):
+        frame_duration = 1152 / self.header.sampling_rate
+        self.play_time = self.frame_count * frame_duration
+
+    def get_play_time(self):
+        return self.play_time
