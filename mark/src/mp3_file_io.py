@@ -2,7 +2,7 @@ import os.path
 
 import mp3_header_factory
 
-class MP3FileReader:
+class MP3FileIo:
     def __init__(self, file_path):
         self.file_path = file_path
         self.file_obj = None
