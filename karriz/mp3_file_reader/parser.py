@@ -44,7 +44,7 @@ SAMPLE_RATE_TABLE = [
 ]
 
 @dataclass
-class MP3File:
+class MP3FrameHeader:
     version: MP3Version = MP3Version.MPEG_2_5
     layer: MP3Layer = MP3Layer.RESERVED
     protection: MP3Protection = MP3Protection.PROTECTED_BY_CRC
@@ -57,6 +57,10 @@ class MP3File:
     copyright: MP3Copyright = MP3Copyright.NOT_COPYRIGHTED
     original: MP3Original = MP3Original.COPY
     emphasis: MP3Emphasis = MP3Emphasis.NONE
+
+@dataclass
+class MP3File:
+    totalDuration: int = 0
 
 class MP3FileParser:
     def __init__(self, filepath:str):
@@ -81,15 +85,15 @@ class MP3FileParser:
     def __parseBitrate(self, version:int, layer:int) -> int:
         readBitrate = self.mp3_file_stream.read(4).uint
 
-        if readBitrate == BAD_BITRATE:
+        if readBitrate is BAD_BITRATE:
             raise BadBitrateError
 
-        return BITRATE_TABLE[version][layer][readBitrate]
+        return BITRATE_TABLE[version][layer][readBitrate] * 1000
 
     def __parseSamplingRateFrequency(self, version:int) -> int:
         readFreq = self.mp3_file_stream.read(2).uint
 
-        if readFreq == RESERVED_FREQ:
+        if readFreq is RESERVED_FREQ:
             raise InvalidFrequencyError
 
         return SAMPLE_RATE_TABLE[version][readFreq]
@@ -119,57 +123,69 @@ class MP3FileParser:
         if self.mp3_file_stream is None:
             raise FileStreamNotLoadedError
 
-        mp3_file = MP3File()
+        total_duration = 0
 
-        # check frameSync is valid
-        self.__checkSyncBits()
-
-        # Parse version: 2bits
-        mp3_file.version = self.__parseVersion()
-
-        if mp3_file.version != MP3Version.MPEG_1:
-            raise VersionNotMatchedError
+        while self.mp3_file_stream.pos + 32 <= self.mp3_file_stream.len:
+            frameheader = MP3FrameHeader()
             
-        # Parse layer: 2bits
-        mp3_file.layer = self.__parseLayer()
-        
-        if mp3_file.layer != MP3Layer.LAYER_III:
-            raise LayerNotMatchedError
-        
-        # Parse protection: 1bit
-        mp3_file.protection = self.__parseProtection()
+            # check frameSync is valid
+            self.__checkSyncBits()
 
-        # Parse bitrate: 4bits
-        mp3_file.bitrate = self.__parseBitrate(mp3_file.version.value, mp3_file.layer.value)
+            # Parse version: 2bits
+            frameheader.version = self.__parseVersion()
 
-        # Parse samplingRateFreq: 2bits
-        mp3_file.samplingRateFreq = self.__parseSamplingRateFrequency(mp3_file.version.value)
+            if frameheader.version != MP3Version.MPEG_1:
+                raise VersionNotMatchedError
+                
+            # Parse layer: 2bits
+            frameheader.layer = self.__parseLayer()
+            
+            if frameheader.layer != MP3Layer.LAYER_III:
+                raise LayerNotMatchedError
+            
+            # Parse protection: 1bit
+            frameheader.protection = self.__parseProtection()
 
-        # Parse paddingBit: 1bit
-        mp3_file.paddingBit = self.__parsePaddingBit()
+            # Parse bitrate: 4bits
+            frameheader.bitrate = self.__parseBitrate(frameheader.version.value, frameheader.layer.value)
 
-        # Read privateBit: 1bit
-        mp3_file.privateBit = self.__parsePrivateBit()
+            # Parse samplingRateFreq: 2bits
+            frameheader.samplingRateFreq = self.__parseSamplingRateFrequency(frameheader.version.value)
 
-        # Read channelMode: 2bits
-        mp3_file.channelMode = self.__parseChannelMode()
+            # Parse paddingBit: 1bit
+            frameheader.paddingBit = self.__parsePaddingBit()
 
-        # Read modeExtension: 2bits
-        mp3_file.modeExtension = self.__parseModeExtension()
+            # Read privateBit: 1bit
+            frameheader.privateBit = self.__parsePrivateBit()
 
-        # Read copyright: 1bit
-        mp3_file.copyright = self.__parseCopyright()
+            # Read channelMode: 2bits
+            frameheader.channelMode = self.__parseChannelMode()
 
-        # Read original: 1bit
-        mp3_file.original = self.__parseOriginal()
+            # Read modeExtension: 2bits
+            frameheader.modeExtension = self.__parseModeExtension()
 
-        # Read emphasis: 2bits
-        mp3_file.emphasis = self.__parseEmphasis()
+            # Read copyright: 1bit
+            frameheader.copyright = self.__parseCopyright()
+
+            # Read original: 1bit
+            frameheader.original = self.__parseOriginal()
+
+            # Read emphasis: 2bits
+            frameheader.emphasis = self.__parseEmphasis()
+
+            frame_length = 144 * frameheader.bitrate // frameheader.samplingRateFreq + frameheader.paddingBit.value
+            frame_duration = 1152 / frameheader.samplingRateFreq
+            
+            print(frame_length * 8)
+            print(frame_duration)
+
+            self.mp3_file_stream.pos += frame_length * 8
+            total_duration += frame_duration
+
+        mp3_file = MP3File()
+        mp3_file.totalDuration = total_duration
 
         return mp3_file
-
-    def total_frame(self):
-        pass
 
     def play_time(self):
         pass

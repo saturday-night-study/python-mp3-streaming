@@ -42,7 +42,7 @@ TDD는 말그대로 테스트 주도형 개발로, 개발 방법론 중 하나�
 
 ### 2 Week
 3. 전체 프레임 수 조회
-  + get_total_frame() -> int
+  + frame_length() -> int
     파싱이 완료 된 MP3File의 총 프레임 수를 조회한다
 
 4. MP3 전체 재생 시간 계산

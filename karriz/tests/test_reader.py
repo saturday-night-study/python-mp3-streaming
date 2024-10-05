@@ -36,10 +36,9 @@ class MP3FileParserTests(unittest.TestCase):
 
     # [성공] 정상 테스트 MP3File 파싱
     def test_parse_file(self): 
-        self.mp3_file_reader = mp3_file_reader.MP3FileParser("./assets/input.mp3")
+        mp3filereader = mp3_file_reader.MP3FileParser("./assets/input.mp3")
         
-        mp3_file = self.mp3_file_reader.parse()
-        print(mp3_file)
+        mp3filereader.parse()
 
 class MP3FileTrimmerTests(unittest.TestCase):    
     # [실패] 잘못 된 파일로 트리밍 후 파일 저장 실패
