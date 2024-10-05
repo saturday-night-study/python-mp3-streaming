@@ -2,7 +2,6 @@ from mp3_header import MP3Header
 
 
 class MP3HeaderFactory:
-
     @classmethod
     def create(cls, bytes):
         versions = {
@@ -34,9 +33,9 @@ class MP3HeaderFactory:
             15: "bad",
         }
         sampling_rates = {
-            0: "44100",
-            1: "48000",
-            2: "32000",
+            0: 44100,
+            1: 48000,
+            2: 32000,
         }
         channel_modes = {
             0: "Stereo",
