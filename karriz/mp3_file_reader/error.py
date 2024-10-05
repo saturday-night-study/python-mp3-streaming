@@ -14,7 +14,10 @@ class LayerNotMatchedError(Exception):
     def __init__(self):
         super().__init__('MP3와 맞지 않는 레이어 값 입니다.')     
 
+class BadBitrateError(Exception):
+    def __init__(self):
+        super().__init__('잘못 된 Bitrate 값 입니다.')     
+
 class InvalidFrequencyError(Exception):
     def __init__(self):
-        super().__init__('잘못 된 Frequency 정보입니다.')     
-    
+        super().__init__('잘못 된 Frequency 값 입니다.')     
