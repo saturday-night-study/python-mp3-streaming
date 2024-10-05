@@ -18,10 +18,24 @@ class MP3Reader:
             print(f"입력 파라미터 범위 오류: n{type(n)}=[{n}]")
             return None
 
+        header = self.__read_frame_header()
+
+        return header
+
+    def __read_frame_header(self) -> Optional[MP3FrameHeader]:
+        if self.__fio.closed:
+            raise IOError()
+
         # TODO: 현재 파일 포인터 위치를 모르기 때문에 파일 포인터 위치를 초기화 한 후 읽어야 함
         # TODO: 4바이트를 읽는 것이 아니라 1바이트씩 이동하면서 찾아야 함
+
+        position = self.__fio.current_position
         data = self.__fio.read(FRAME_HEADER_SIZE)
+        if len(data) < FRAME_HEADER_SIZE:
+            raise EOFError()
+
         header = MP3FrameHeader(
+            position=position,
             sync_word=self.__get_bits_from_bytes(data, SYNC_WORD_RANGE),
             version=self.__get_bits_from_bytes(data, VERSION_RANGE),
             layer=self.__get_bits_from_bytes(data, LAYER_RANGE),
@@ -40,14 +54,15 @@ class MP3Reader:
         return header
 
     @staticmethod
-    def __get_bits_from_bytes(data: bytes, range: FrameHeaderRange) -> int:
+    def __get_bits_from_bytes(data: bytes, frame_header_range: FrameHeaderRange) -> int:
         int_data = int.from_bytes(data, byteorder='big')
         total_bits = len(data) * 8
-        shift_length = total_bits - range.offset - range.length
-        mask = (1 << range.length) - 1
+        shift_length = total_bits - frame_header_range.offset - frame_header_range.length
+        mask = (1 << frame_header_range.length) - 1
 
         return (int_data >> shift_length) & mask
 
+    # TODO: 새로운 이터레이터를 반환하지 않고 있어서 1회만 사용 가능함. 반복해서 사용할 수 있도로 새로운 이터레이터 객체를 반환할 수 있어야 함.
     @property
     def headers(self) -> 'MP3Reader':
         return self
@@ -56,4 +71,13 @@ class MP3Reader:
         return self
 
     def __next__(self):
+        while self.__fio.has_remain_bytes:
+            try:
+                header = self.__read_frame_header()
+            except IOError:
+                break
+
+            self.__fio.skip(header.audio_data_length)
+            return header
+
         raise StopIteration()

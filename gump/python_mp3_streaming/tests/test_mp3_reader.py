@@ -16,10 +16,6 @@ class TestMP3Reader(unittest.TestCase):
         reader = MP3Reader(self.__fio)
         header = reader.read_nth_frame_header(0)
         self.assertIsNotNone(header)
-
-        print(repr(header))
-        print(str(header))
-
         self.assertTrue(header.is_valid_frame)
 
     def test_read_nth_frame_header_invalid_parameter(self):
@@ -56,9 +52,13 @@ class TestMP3Reader(unittest.TestCase):
 
     def test_read_all_frame_headers(self):
         reader = MP3Reader(self.__fio)
+        position = 0
         for header in reader.headers:
             self.assertTrue(header.is_valid_frame)
-        
+            self.assertEqual(header.position, position)
+
+            position = header.position + header.frame_length
+
 
 if __name__ == '__main__':
     unittest.main()
