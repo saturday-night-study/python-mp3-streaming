@@ -63,6 +63,8 @@ class MP3Reader:
         return self
 
     def __iter__(self):
+        self.__fio.reset()
+
         return self
 
     def __next__(self):
@@ -77,3 +79,15 @@ class MP3Reader:
             return header
 
         raise StopIteration()
+
+    def read_bytes_from_duration(self, seconds) -> bytes:
+        reader = MP3Reader(self.__fio)
+        duration = 0
+
+        for header in reader.headers:
+            duration += header.audio_data_duration
+            if duration >= seconds:
+                data = self.__fio.read(self.__fio.file_size - self.__fio.current_position)
+                return data
+
+        return bytes()

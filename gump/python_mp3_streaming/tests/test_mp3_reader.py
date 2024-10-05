@@ -53,10 +53,12 @@ class TestMP3Reader(unittest.TestCase):
             position = header.position + header.frame_length
 
     def test_read_bytes_from_duration(self):
-        seconds = 30
         reader = MP3Reader(self.__fio)
-        bytes = reader.read_bytes_from_duration(seconds)
-        self.assertGreater(len(bytes), 0)
+        thirty_seconds_data = reader.read_bytes_from_duration(30)
+        self.assertGreater(len(thirty_seconds_data), 0)
+
+        sixty_seconds_data = reader.read_bytes_from_duration(60)
+        self.assertLess(len(sixty_seconds_data), len(thirty_seconds_data))
 
 
 if __name__ == '__main__':

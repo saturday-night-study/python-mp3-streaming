@@ -86,3 +86,9 @@ class FileIO:
             raise IOError("파일이 닫혀 있습니다.")
 
         self.__file.seek(n, 1)
+
+    def reset(self):
+        if self.closed:
+            raise IOError("파일이 닫혀 있습니다.")
+
+        self.__file.seek(0, 0)
