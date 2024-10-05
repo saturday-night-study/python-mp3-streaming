@@ -26,32 +26,39 @@ class MP3Reader:
         if self.__fio.closed:
             raise IOError()
 
-        # TODO: 현재 파일 포인터 위치를 모르기 때문에 파일 포인터 위치를 초기화 한 후 읽어야 함
-        # TODO: 4바이트를 읽는 것이 아니라 1바이트씩 이동하면서 찾아야 함
+        # Sync Word를 찾을 때까지 1바이트씩 이동
+        while True:
+            position = self.__fio.current_position
+            data = self.__fio.read(FRAME_HEADER_SIZE)
+            if len(data) < FRAME_HEADER_SIZE:
+                raise EOFError()
 
-        position = self.__fio.current_position
-        data = self.__fio.read(FRAME_HEADER_SIZE)
-        if len(data) < FRAME_HEADER_SIZE:
-            raise EOFError()
+            header = MP3Reader.__parse_header(position, data)
+            if header.is_valid_frame:
+                break
 
-        header = MP3FrameHeader(
-            position=position,
-            sync_word=self.__get_bits_from_bytes(data, SYNC_WORD_RANGE),
-            version=self.__get_bits_from_bytes(data, VERSION_RANGE),
-            layer=self.__get_bits_from_bytes(data, LAYER_RANGE),
-            protection_bit=self.__get_bits_from_bytes(data, PROTECTION_BIT_RANGE),
-            bitrate_index=self.__get_bits_from_bytes(data, BITRATE_INDEX_RANGE),
-            sampling_rate=self.__get_bits_from_bytes(data, SAMPLING_RATE_RANGE),
-            padding_bit=self.__get_bits_from_bytes(data, PADDING_BIT_RANGE),
-            private_bit=self.__get_bits_from_bytes(data, PRIVATE_BIT_RANGE),
-            channel_mode=self.__get_bits_from_bytes(data, CHANNEL_MODE_RANGE),
-            mode_extension=self.__get_bits_from_bytes(data, MODE_EXTENSION_RANGE),
-            copyright=self.__get_bits_from_bytes(data, COPYRIGHT_RANGE),
-            original=self.__get_bits_from_bytes(data, ORIGINAL_RANGE),
-            emphasis=self.__get_bits_from_bytes(data, EMPHASIS_RANGE)
-        )
+            self.__fio.skip(-(FRAME_HEADER_SIZE - 1))
 
         return header
+
+    @staticmethod
+    def __parse_header(position: int, data: bytes) -> Optional[MP3FrameHeader]:
+        return MP3FrameHeader(
+            position=position,
+            sync_word=MP3Reader.__get_bits_from_bytes(data, SYNC_WORD_RANGE),
+            version=MP3Reader.__get_bits_from_bytes(data, VERSION_RANGE),
+            layer=MP3Reader.__get_bits_from_bytes(data, LAYER_RANGE),
+            protection_bit=MP3Reader.__get_bits_from_bytes(data, PROTECTION_BIT_RANGE),
+            bitrate_index=MP3Reader.__get_bits_from_bytes(data, BITRATE_INDEX_RANGE),
+            sampling_rate=MP3Reader.__get_bits_from_bytes(data, SAMPLING_RATE_RANGE),
+            padding_bit=MP3Reader.__get_bits_from_bytes(data, PADDING_BIT_RANGE),
+            private_bit=MP3Reader.__get_bits_from_bytes(data, PRIVATE_BIT_RANGE),
+            channel_mode=MP3Reader.__get_bits_from_bytes(data, CHANNEL_MODE_RANGE),
+            mode_extension=MP3Reader.__get_bits_from_bytes(data, MODE_EXTENSION_RANGE),
+            copyright=MP3Reader.__get_bits_from_bytes(data, COPYRIGHT_RANGE),
+            original=MP3Reader.__get_bits_from_bytes(data, ORIGINAL_RANGE),
+            emphasis=MP3Reader.__get_bits_from_bytes(data, EMPHASIS_RANGE)
+        )
 
     @staticmethod
     def __get_bits_from_bytes(data: bytes, frame_header_range: FrameHeaderRange) -> int:
@@ -78,6 +85,7 @@ class MP3Reader:
                 break
 
             self.__fio.skip(header.audio_data_length)
+
             return header
 
         raise StopIteration()

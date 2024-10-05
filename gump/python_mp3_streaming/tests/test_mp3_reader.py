@@ -56,7 +56,6 @@ class TestMP3Reader(unittest.TestCase):
         for header in reader.headers:
             self.assertTrue(header.is_valid_frame)
             self.assertEqual(header.position, position)
-
             position = header.position + header.frame_length
 
 
