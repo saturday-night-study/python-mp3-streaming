@@ -15,6 +15,7 @@ class InvalidFrameSyncError(Exception):
 class MP3File:
     frameSync: int = 0
     version: int = 0 # 0 = MPEG 2.5, 1 = reserved, 2 = MPEG 2, 3 = MPEG 1
+    layer: int = 0 # 0 = reserved, 1 = layer III, 2 = layer II, 3 = layer I
     protection: int = 0 # 0 = protected by CRC, 1 = not protected
     bitrate: int = 0
     samplingRateFreq: int = 0
@@ -48,6 +49,11 @@ class MP3FileReader:
         readFrame = self.mp3_file_stream.read(2).uint
 
         self.mp3_file.version = readFrame
+
+        # Read layer: 2bits
+        readFrame = self.mp3_file_stream.read(2).uint
+
+        self.mp3_file.layer = readFrame
 
         # Read protection: 1bit
         readFrame = self.mp3_file_stream.read(1).uint
