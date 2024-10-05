@@ -1,10 +1,29 @@
 from dataclasses import dataclass
 from bitstring import ConstBitStream
 
-from enum import MP3Version, MP3Layer, MP3Protection, MP3PaddingBit, MP3ChannelMode ,MP3Copyright ,MP3Original, MP3Emphasis
-from error import FileStreamNotLoadedError, InvalidFrameSyncError, VersionNotMatchedError, LayerNotMatchedError
+from .enum import MP3Version, MP3Layer, MP3Protection, MP3PaddingBit, MP3ChannelMode ,MP3Copyright ,MP3Original, MP3Emphasis
+from .error import FileStreamNotLoadedError, InvalidFrameSyncError, VersionNotMatchedError, LayerNotMatchedError, InvalidFrequencyError
 
 FRAME_SYNC_BITS = 0x7FF
+
+BITRATE_TABLE = {
+    (1, 1): [0, 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256],        # MPEG-2.5 Layer 1
+    (1, 2): [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160],             # MPEG-2.5 Layer 2
+    (1, 3): [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160],             # MPEG-2.5 Layer 3
+    (2, 1): [0, 32, 48, 56, 64, 80, 96, 112, 128, 144, 160, 176, 192, 224, 256],        # MPEG-2 Layer 1
+    (2, 2): [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160],             # MPEG-2 Layer 2
+    (2, 3): [0, 8, 16, 24, 32, 40, 48, 56, 64, 80, 96, 112, 128, 144, 160],             # MPEG-2 Layer 3
+    (3, 1): [0, 32, 64, 96, 128, 160, 192, 224, 256, 288, 320, 352, 384, 416, 448],     # MPEG-1 Layer 1
+    (3, 2): [0, 32, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320, 384],        # MPEG-1 Layer 2
+    (3, 3): [0, 32, 40, 48, 56, 64, 80, 96, 112, 128, 160, 192, 224, 256, 320]          # MPEG-1 Layer 3
+}
+
+SAMPLE_RATE_TABLE = [
+    [0, 0, 0],              # Reserved
+    [11025, 12000, 8000],   # MPEG2.5
+    [22050, 24000, 16000],  # MPEG2
+    [44100, 48000, 32000],  # MPEG1
+]
 
 @dataclass
 class MP3File:
@@ -44,8 +63,13 @@ class MP3FileParser:
     def __parseBitrate(self) -> int:
         return self.mp3_file_stream.read(4).uint
 
-    def __parseSamplingRateFrequency(self) -> int:
-        return self.mp3_file_stream.read(2).uint
+    def __parseSamplingRateFrequency(self, version:int) -> int:
+        readFreq = self.mp3_file_stream.read(2).uint
+
+        if readFreq == 3:
+            raise InvalidFrequencyError
+
+        return SAMPLE_RATE_TABLE[version][readFreq]
 
     def __parsePaddingBit(self) -> MP3PaddingBit:
         return MP3PaddingBit(self.mp3_file_stream.read(1).uint)
@@ -83,7 +107,6 @@ class MP3FileParser:
         if mp3_file.version != MP3Version.MPEG_1:
             raise VersionNotMatchedError
             
-
         # Parse layer: 2bits
         mp3_file.layer = self.__parseLayer()
         
@@ -97,7 +120,7 @@ class MP3FileParser:
         mp3_file.bitrate = self.__parseBitrate()
 
         # Parse samplingRateFreq: 2bits
-        mp3_file.samplingRateFreq = self.__parseSamplingRateFrequency()
+        mp3_file.samplingRateFreq = self.__parseSamplingRateFrequency(mp3_file.version.value)
 
         # Parse paddingBit: 1bit
         mp3_file.paddingBit = self.__parsePaddingBit()
@@ -121,3 +144,10 @@ class MP3FileParser:
         mp3_file.emphasis = self.__parseEmphasis()
 
         return mp3_file
+
+    def total_frame(self):
+        pass
+
+    def play_time(self):
+        pass
+
