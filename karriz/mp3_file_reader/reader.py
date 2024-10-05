@@ -1,3 +1,4 @@
+from enum import Enum
 from dataclasses import dataclass
 from bitstring import ConstBitStream
 
@@ -11,20 +12,61 @@ class InvalidFrameSyncError(Exception):
     def __init__(self):
         super().__init__('유효하지 않은 FrameSync 값 입니다.')
 
+class MP3Version(Enum):
+    MPEG_2_5 = 0
+    RESERVED = 1
+    MPEG_2 = 2
+    MPEG_1 = 3
+
+class MP3Layer(Enum):
+    RESERVED = 0
+    LAYER_III = 1
+    LAYER_II = 2
+    LAYER_I = 3
+
+class MP3Protection(Enum):
+    PROTECTED_BY_CRC = 0
+    NOT_PROTECTED = 1
+
+class MP3PaddingBit(Enum):
+    NOT_PADDED = 0
+    PADDED = 1
+
+class MP3ChannelMode(Enum):
+    STEREO = 0
+    JOINT_STEREO = 1
+    DUAL_MONO_CAHNNEL = 2
+    SINGLE_MONO_CHANNEL = 3
+
+class MP3Copyright(Enum):
+    NOT_COPYRIGHTED = 0
+    COPYRIGHTED = 1
+
+class MP3Original(Enum):
+    COPY = 0
+    ORIGINAL = 1
+
+class MP3Emphasis(Enum):
+    NONE = 0
+    E_50_15_MS = 1  # 50/15µs emphasis
+    RESERVED = 2
+    CCIT_J_17 = 3
+
 @dataclass
 class MP3File:
     frameSync: int = 0
-    version: int = 0 # 0 = MPEG 2.5, 1 = reserved, 2 = MPEG 2, 3 = MPEG 1
-    layer: int = 0 # 0 = reserved, 1 = layer III, 2 = layer II, 3 = layer I
-    protection: int = 0 # 0 = protected by CRC, 1 = not protected
+    version: MP3Version = MP3Version.MPEG_2_5
+    layer: MP3Layer = MP3Layer.RESERVED
+    protection: MP3Protection = MP3Protection.PROTECTED_BY_CRC
     bitrate: int = 0
     samplingRateFreq: int = 0
-    padding: int = 0
-    private: int = 0
-    channelMode: int = 0
-    copyright: int = 0
-    original: int = 0
-    emphasis: int = 0
+    paddingBit: MP3PaddingBit = MP3PaddingBit.NOT_PADDED
+    privateBit: int = 0
+    channelMode: MP3ChannelMode = MP3ChannelMode.STEREO
+    modeExtension: int = 0
+    copyright: MP3Copyright = MP3Copyright.NOT_COPYRIGHTED
+    original: MP3Original = MP3Original.COPY
+    emphasis: MP3Emphasis = MP3Emphasis.NONE
 
 class MP3FileReader:
     def __init__(self, filename:str):
@@ -70,15 +112,15 @@ class MP3FileReader:
 
         mp3_file.samplingRateFreq = readFrame
 
-        # Read padding: 1bit
+        # Read paddingBit: 1bit
         readFrame = self.mp3_file_stream.read(1).uint
 
-        mp3_file.padding = readFrame
+        mp3_file.paddingBit = readFrame
 
-        # Read private: 1bit
+        # Read privateBit: 1bit
         readFrame = self.mp3_file_stream.read(1).uint
 
-        mp3_file.private = readFrame
+        mp3_file.privateBit = readFrame
 
         # Read channelMode: 2bits
         readFrame = self.mp3_file_stream.read(2).uint
