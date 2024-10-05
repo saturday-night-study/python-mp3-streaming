@@ -7,8 +7,8 @@ file_path = "../resource/input.mp3"
 
 class TestMp3(unittest.TestCase):
     def setUp(self):
-        reader = MP3FileIo(file_path)
-        reader.open()
+        reader = MP3FileIo()
+        reader.open(file_path)
         reader.read_all()
         reader.close()
 
@@ -46,7 +46,8 @@ class TestMp3(unittest.TestCase):
         mp3.set_frame_count()
         mp3.set_play_time()
 
-        cuttedMp3 = mp3.cut(0, 10)
+        output = mp3.cut(0, 10)
+        output.save("../resource/output.mp3")
 
 
 if __name__ == '__main__':

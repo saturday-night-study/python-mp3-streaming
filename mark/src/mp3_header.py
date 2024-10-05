@@ -32,5 +32,3 @@ class MP3Header:
 
     def calc_frame_size(self):
         return int((144 * int(self.bitrate) * 1000) / self.sampling_rate + self.padding)
-
-

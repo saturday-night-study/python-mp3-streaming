@@ -3,17 +3,16 @@ import os.path
 import mp3_header_factory
 
 class MP3FileIo:
-    def __init__(self, file_path):
-        self.file_path = file_path
+    def __init__(self):
         self.file_obj = None
         self.bytes = None
 
     def file_exists(self):
         return os.path.exists(self.file_path)
 
-    def open(self):
+    def open(self, file_path):
         try:
-            self.file_obj = open(self.file_path, 'rb')
+            self.file_obj = open(file_path, 'rb')
         except IOError as e:
             print(f"파일을 열 수 없습니다: {e}")
             return
@@ -57,3 +56,17 @@ class MP3FileIo:
                 print(f"파일을 열 수 없습니다: {e}")
 
             return False
+
+    def cut_frames(self, start_byte, end_byte):
+        io = MP3FileIo()
+        io.bytes = self.bytes[0:4] + self.bytes[start_byte:end_byte]
+        return io
+
+    def save(self, file_path):
+        try:
+            file_obj = open(file_path, 'wb')
+            file_obj.write(self.bytes)
+            file_obj.close()
+        except IOError as e:
+            print(f"파일을 저장할 수 없습니다: {e}")
+            return
