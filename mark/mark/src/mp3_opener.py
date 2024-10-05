@@ -1,9 +1,6 @@
 import os.path
 
-import mp3_header
 import mp3_header_factory
-
-
 
 class MP3Opener:
     def __init__(self, file_path):
@@ -48,7 +45,7 @@ class MP3Opener:
                 print("파일이 너무 작습니다")
                 return None
 
-            return mp3_header_factory.MP3HeaderFactory.create(bytes)
+            return mp3_header_factory.MP3HeaderFactory.create(header_bytes)
         except IOError as e:
             print(f"파일을 열 수 없습니다: {e}")
             return None
