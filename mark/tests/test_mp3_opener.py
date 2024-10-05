@@ -1,7 +1,7 @@
 import unittest
 
 from mp3_header import MP3Header
-from mp3_opener import MP3Opener
+from mp3_file_io import MP3FileIo
 
 # Red 단계에서 open_mp3_file_header 함수는 작성되지 않았지만, 테스트 코드를 작성하여 실패하는 테스트를 만들어 놓았다.
 # Green 단계에서 open_mp3_file_header 함수를 작성하여 테스트를 통과시킨다.
@@ -23,19 +23,19 @@ permission_denied_path = "C:\Users\prtra\AppData\Local\Steam\local.vdf"
 class TestMp3Opener(unittest.TestCase):
     # 파일이 존재하는지 확인
     def test_check_mp3_file_exist(self):
-        mp3_opener = MP3Opener(file_path)
+        mp3_opener = MP3FileIo(file_path)
         is_file_exists, message = mp3_opener.file_exists()
         self.assertTrue(is_file_exists)
 
     def test_check_mp3_file_exist_with_wrong_path(self):
-        mp3_opener = MP3Opener("../resource/not_exist.mp3")
+        mp3_opener = MP3FileIo("../resource/not_exist.mp3")
         is_file_exists, message = mp3_opener.file_exists()
         print(message)
         self.assertFalse(is_file_exists)
         self.assertIn("파일을 찾을 수 없습니다", message, "파일을 찾을 수 없습니다 오류 메시지가 반환되지 않았습니다.")
 
     def test_check_mp3_file_exist_with_permission_error(self):
-        mp3_opener = MP3Opener(permission_denied_path)
+        mp3_opener = MP3FileIo(permission_denied_path)
         is_file_exists, message = mp3_opener.file_exists()
         print(message)
         self.assertFalse(is_file_exists)
@@ -43,12 +43,12 @@ class TestMp3Opener(unittest.TestCase):
 
     # 파일 헤더 검사
     def test_open_with_check_header_is_mp3_file(self):
-        mp3_opener = MP3Opener(file_path)
+        mp3_opener = MP3FileIo(file_path)
         is_file_mp3 = mp3_opener.open_with_check_file_header()
         self.assertTrue(is_file_mp3)
 
     def test_open_with_check_header_is_not_mp3_file(self):
-        mp3_opener = MP3Opener("../resource/input.txt")
+        mp3_opener = MP3FileIo("../resource/input.txt")
         is_file_mp3 = mp3_opener.open_with_check_file_header()
         self.assertFalse(is_file_mp3)
 
@@ -56,13 +56,13 @@ class TestMp3Opener(unittest.TestCase):
     # green : open_with_parse_header_is_mp3_file 함수를 작성하여 테스트를 통과시킨다.
     # refactor : 헤더 클래스를 가져와서 헤더를 분석하는 코드를 분리하였다.
     def test_open_with_parse_header(self):
-        mp3_opener = MP3Opener(file_path)
+        mp3_opener = MP3FileIo(file_path)
         header = mp3_opener.open_with_parse_header()
         self.assertIsInstance(header, MP3Header)
         header.print()
 
     def test_open_with_parse_header_is_mp3_file(self):
-        mp3_opener = MP3Opener("../resource/input.txt")
+        mp3_opener = MP3FileIo("../resource/input.txt")
         header = mp3_opener.open_with_parse_header()
         self.assertIsNone(header)
 

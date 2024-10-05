@@ -1,14 +1,17 @@
-from mp3_opener import MP3Opener
+from mp3 import MP3
+from mp3_file_io import MP3FileIo
 
-opener = MP3Opener("../resource/input.mp3")
+reader = MP3FileIo("../resource/input.mp3")
+reader.open()
+reader.read_all()
 
-if not opener.file_exists():
-    print("This file does not exist.")
-    exit(-1)
+mp3 = MP3(reader)
+mp3.set_header()
+mp3.set_frame_size()
+mp3.set_frame_count()
+mp3.set_play_time()
 
-if not opener.open_with_check_file_header():
-    print("This file is not mp3 file.")
-    exit(-1)
-
-header = opener.open_with_parse_header()
-header.print()
+print(mp3.header)
+print(mp3.frame_size)
+print(mp3.frame_count)
+print(mp3.play_time)
