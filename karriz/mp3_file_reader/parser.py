@@ -1,60 +1,10 @@
-from enum import Enum
 from dataclasses import dataclass
 from bitstring import ConstBitStream
 
+from enum import MP3Version, MP3Layer, MP3Protection, MP3PaddingBit, MP3ChannelMode ,MP3Copyright ,MP3Original, MP3Emphasis
+from error import FileStreamNotLoadedError, InvalidFrameSyncError, VersionNotMatchedError, LayerNotMatchedError
+
 FRAME_SYNC_BITS = 0x7FF
-
-class FileStreamNotLoadedError(Exception):
-    def __init__(self):
-        super().__init__('MP3 파일이 로드 되지않았습니다.')
-        
-class InvalidFrameSyncError(Exception):
-    def __init__(self):
-        super().__init__('유효하지 않은 FrameSync 값 입니다.')
-
-class LayerNotMatchedError(Exception):
-    def __init__(self):
-        super().__init__('MP3와 맞지 않는 레이어 값 입니다.')        
-
-class MP3Version(Enum):
-    MPEG_2_5 = 0
-    RESERVED = 1
-    MPEG_2 = 2
-    MPEG_1 = 3
-
-class MP3Layer(Enum):
-    RESERVED = 0
-    LAYER_III = 1
-    LAYER_II = 2
-    LAYER_I = 3
-
-class MP3Protection(Enum):
-    PROTECTED_BY_CRC = 0
-    NOT_PROTECTED = 1
-
-class MP3PaddingBit(Enum):
-    NOT_PADDED = 0
-    PADDED = 1
-
-class MP3ChannelMode(Enum):
-    STEREO = 0
-    JOINT_STEREO = 1
-    DUAL_MONO_CAHNNEL = 2
-    SINGLE_MONO_CHANNEL = 3
-
-class MP3Copyright(Enum):
-    NOT_COPYRIGHTED = 0
-    COPYRIGHTED = 1
-
-class MP3Original(Enum):
-    COPY = 0
-    ORIGINAL = 1
-
-class MP3Emphasis(Enum):
-    NONE = 0
-    E_50_15_MS = 1  # 50/15µs emphasis
-    RESERVED = 2
-    CCIT_J_17 = 3
 
 @dataclass
 class MP3File:
@@ -71,7 +21,7 @@ class MP3File:
     original: MP3Original = MP3Original.COPY
     emphasis: MP3Emphasis = MP3Emphasis.NONE
 
-class MP3FileReader:
+class MP3FileParser:
     def __init__(self, filepath:str):
         self.mp3_file = None
         self.mp3_file_stream = ConstBitStream(filename=filepath)
@@ -129,6 +79,10 @@ class MP3FileReader:
 
         # Parse version: 2bits
         mp3_file.version = self.__parseVersion()
+
+        if mp3_file.version != MP3Version.MPEG_1:
+            raise VersionNotMatchedError
+            
 
         # Parse layer: 2bits
         mp3_file.layer = self.__parseLayer()
