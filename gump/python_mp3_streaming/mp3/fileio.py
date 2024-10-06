@@ -8,13 +8,6 @@ class FileIO:
         self.__file: Optional[BinaryIO] = None
         self.__file = FileIO.__open(path, mode)
 
-        # https://docs.python.org/3/library/io.html#io.IOBase.seek
-        current_position = self.__file.tell()
-        self.__file.seek(0, 2)
-        last_position = self.__file.tell()
-        self.__file.seek(current_position, 0)
-        self.__file_size = last_position - current_position
-
     @staticmethod
     def __open(path: str, mode: str) -> BinaryIO:
         if not isinstance(path, str):
@@ -54,7 +47,13 @@ class FileIO:
         if self.closed:
             return 0
 
-        return self.__file_size
+        # https://docs.python.org/3/library/io.html#io.IOBase.seek
+        current_position = self.__file.tell()
+        self.__file.seek(0, 2)
+        file_size = self.__file.tell()
+        self.__file.seek(current_position, 0)
+
+        return file_size
 
     @property
     def has_remain_bytes(self) -> bool:
@@ -98,4 +97,3 @@ class FileIO:
             raise IOError("파일이 닫혀 있습니다.")
 
         self.__file.write(data)
-        self.__file_size += len(data)
