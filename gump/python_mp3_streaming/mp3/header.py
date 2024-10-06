@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from python_mp3_streaming.mp3_frame_header_spec import *
+from mp3.header_spec import *
 
 
 @dataclass(frozen=True)

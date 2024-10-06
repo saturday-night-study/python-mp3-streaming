@@ -1,14 +1,14 @@
 from typing import Optional
 
-from python_mp3_streaming.end_of_mp3_frame_error import EndOfMP3FrameError
-from python_mp3_streaming.file_io import FileIO
-from python_mp3_streaming.mp3_frame_header import MP3FrameHeader
-from python_mp3_streaming.mp3_frame_header_spec import *
+from mp3.errors import EndOfMP3FrameError
+from mp3.fileio import FileIO
+from mp3.header import MP3FrameHeader
+from mp3.header_spec import *
 
 
 class MP3Reader:
-    def __init__(self, file_io: FileIO):
-        self.__fio: FileIO = file_io
+    def __init__(self, fio: FileIO):
+        self.__fio: FileIO = fio
 
     def __read_frame_header(self) -> Optional[MP3FrameHeader]:
         if self.__fio.closed:

@@ -1,5 +1,5 @@
-from python_mp3_streaming.file_io import FileIO
-from python_mp3_streaming.mp3_reader import MP3Reader
+from mp3.fileio import FileIO
+from mp3.reader import MP3Reader
 
 input_file = FileIO("../tests/test_data/input.mp3")
 reader = MP3Reader(input_file)

@@ -1,7 +1,7 @@
 import unittest
 
 # PYTHONPATH=.. 으로 설정해야 패키지 import 가능
-from python_mp3_streaming.file_io import FileIO
+from mp3.fileio import FileIO
 
 
 class TestFileIO(unittest.TestCase):

@@ -1,8 +1,8 @@
 import unittest
 
-from python_mp3_streaming.end_of_mp3_frame_error import EndOfMP3FrameError
-from python_mp3_streaming.file_io import FileIO
-from python_mp3_streaming.mp3_reader import MP3Reader
+from mp3.errors import EndOfMP3FrameError
+from mp3.fileio import FileIO
+from mp3.reader import MP3Reader
 
 
 class TestMP3Reader(unittest.TestCase):
