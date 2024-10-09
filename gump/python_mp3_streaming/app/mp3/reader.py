@@ -1,9 +1,9 @@
 from typing import Optional
 
-from mp3.errors import EndOfMP3FrameError
-from mp3.fileio import FileIO
-from mp3.header import MP3FrameHeader
-from mp3.header_spec import *
+from app.mp3.errors import EndOfMP3FrameError
+from app.mp3.fileio import FileIO
+from app.mp3.header import MP3FrameHeader
+from app.mp3.header_spec import *
 
 
 class MP3Reader:

@@ -1,8 +1,8 @@
 import unittest
 
-from mp3.errors import EndOfMP3FrameError
-from mp3.fileio import FileIO
-from mp3.reader import MP3Reader
+from app.mp3 import FileIO
+from app.mp3.errors import EndOfMP3FrameError
+from app.mp3.reader import MP3Reader
 
 
 class TestMP3Reader(unittest.TestCase):
