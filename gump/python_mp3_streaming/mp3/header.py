@@ -1,10 +1,11 @@
 from dataclasses import dataclass
 
-from python_mp3_streaming.mp3_frame_header_spec import *
+from mp3.header_spec import *
 
 
 @dataclass(frozen=True)
 class MP3FrameHeader:
+    position: int
     sync_word: int
     version: int
     layer: int
@@ -69,4 +70,27 @@ class MP3FrameHeader:
             f"{'Original':<{field_width}} {original_desc}\n"
             f"{'Emphasis':<{field_width}} {emphasis_desc}\n"
             f"{"-" * (field_width * 2)}\n"
+            f"{'Position':<{field_width}} {self.position}\n"
+            f"{'Frame Length':<{field_width}} {self.frame_length}\n"
+            f"{'Audio Data Length':<{field_width}} {self.audio_data_length}\n"
+            f"{'Audio Data Duration':<{field_width}} {self.audio_data_duration}\n"
+            f"{"-" * (field_width * 2)}\n"
         )
+
+    @property
+    def frame_length(self) -> int:
+        # http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm
+        # FrameLengthInBytes = 144 * BitRate / SampleRate + Padding
+        bitrate = BITRATE_ITEMS.get(self.bitrate_index, 0) * 1000
+        sample_rate = SAMPLING_RATE_ITEMS.get(self.sampling_rate, 0)
+        return int(MPEG_VERSION_ONE_MULTIPLIER * bitrate / sample_rate) + self.padding_bit
+
+    @property
+    def audio_data_length(self) -> int:
+        return self.frame_length - FRAME_HEADER_SIZE
+
+    @property
+    def audio_data_duration(self) -> float:
+        # Duration = Layer 3 Samples(1152) / SampleRate
+        sample_rate = SAMPLING_RATE_ITEMS.get(self.sampling_rate, 0)
+        return LAYER_THREE_SAMPLES / sample_rate
