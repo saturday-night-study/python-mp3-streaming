@@ -1,9 +1,9 @@
 import unittest
-import mp3_file_reader
+import mp3
 
 class MP3FileReaderTests(unittest.TestCase):
     def test_read_mp3_file(self):
-        reader = mp3_file_reader.MP3FileReader("./assets/input.mp3")
+        reader = mp3.MP3FileReader("./assets/input.mp3")
 
         mp3_file = reader.read()
 
@@ -15,19 +15,19 @@ class MP3FileReaderTests(unittest.TestCase):
 
 class MP3FileTrimmerTests(unittest.TestCase):
     def setUp(self):
-        reader = mp3_file_reader.MP3FileReader("./assets/input.mp3")
-        
+        reader = mp3.MP3FileReader("./assets/input.mp3")
+
         self.mp3_file = reader.read()
 
     def test_trim_mp3_file(self):
-        mp3_file_trimmer = mp3_file_reader.MP3FileTrimmer(self.mp3_file)
+        mp3_file_trimmer = mp3.MP3FileTrimmer(self.mp3_file)
 
-        # mp3 파일을 프레임 단위로 trimming
-        trimmed_mp3 = mp3_file_trimmer.trim(0, 1000)
+        # mp3 파일을 프레임 단위로 trimming 후 경로로 저장
+        trimmed_mp3 = mp3_file_trimmer.trim(0, 1000, "./assets/trimmed_input.mp3")
 
         # trimming 된 이후 총 duration이 1000 프레임 만큼 잘렸는지 확인
         # 1 프레임당 대략 0.026s = 1000 프레임은 26s
         self.assertEqual(int(trimmed_mp3.total_duration), 26)
-
+        
 if __name__ == '__main__':
    unittest.main()

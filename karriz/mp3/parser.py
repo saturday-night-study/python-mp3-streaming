@@ -1,34 +1,4 @@
-import os
-
-from . import enum, const, model, error
-
-class MP3FileReader:
-    def __init__(self, file_path:str):
-        file_size = os.path.getsize(file_path)
-
-        if file_size == 0:
-            raise error.EmptySizeFileError
-
-        self.mp3 = model.MP3File()
-        self.mp3.file_path = file_path
-
-    def read(self) -> model.MP3File:
-        mp3_file = open(self.mp3.file_path, 'rb')
-
-        while True:
-            try:
-                frame_header_parser = MP3FrameHeaderParser(mp3_file.read(4))
-
-                self.mp3.total_duration += frame_header_parser.get_frame_duration()
-                mp3_file.seek(frame_header_parser.get_frame_size()-4, 1)
-
-                self.mp3.total_frame += 1
-            except error.InValidFrameHeaderSizeError:
-                break
-
-        mp3_file.close()
-
-        return self.mp3
+from . import model, const, enum, error 
 
 class MP3FrameHeaderParser:
     def __init__(self, data:bytes):

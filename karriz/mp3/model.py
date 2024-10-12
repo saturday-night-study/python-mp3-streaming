@@ -18,7 +18,7 @@ class MP3FrameHeader:
     emphasis: MP3Emphasis = MP3Emphasis.NONE
 
 @dataclass
-class MP3File:
-    file_path: str = ""
+class MP3:
+    file_path: str = "" 
     total_frame: int = 0
     total_duration: float = 0 # seconds 단위
