@@ -5,12 +5,13 @@ from typing import BinaryIO, Optional, cast
 # https://peps.python.org/pep-0008/
 class FileIO:
     def __init__(self, path: str, mode: str = "rb"):
+        self.__file: Optional[BinaryIO] = None
+
         if not isinstance(path, str):
             raise ValueError(f"입력된 파일 경로가 문자열이 아닙니다: path{type(path)}=[{path}]")
         if mode not in ["rb", "wb", "ab", "rb+", "wb+", "ab+"]:
             raise ValueError(f"모드가 올바르지 않습니다: mode{type(mode)}=[{mode}]")
 
-        self.__file: Optional[BinaryIO] = None
         self.__file = FileIO.__open(path, mode)
 
     @staticmethod
