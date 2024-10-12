@@ -1,7 +1,7 @@
 import unittest
 
 # PYTHONPATH=.. 으로 설정해야 패키지 import 가능
-from python_mp3_streaming.file_io import FileIO
+from mp3.fileio import FileIO
 
 
 class TestFileIO(unittest.TestCase):
@@ -12,6 +12,8 @@ class TestFileIO(unittest.TestCase):
         self.__not_exists_input_path = "./test_data/not_exists.mp3"
         self.__empty_input_path = "./test_data/empty.mp3"
         self.__directory_input_path = "./test_data"
+        self.__exists_input_file_size = 9375481
+        self.__output_path = "./test_data/output.txt"
 
     # 아래는 테스트 케이스
     # 테스트 케이스의 호출 순서는 정의 순서가 아닌 메서드 이름 알파벳 순서로 호출
@@ -60,6 +62,41 @@ class TestFileIO(unittest.TestCase):
 
         read_bytes = 1
         self.assertRaises(EOFError, fio.read, read_bytes)
+
+    def test_file_size(self):
+        fio = FileIO(self.__exists_input_path)
+        self.assertEqual(fio.file_size, self.__exists_input_file_size)
+
+    def test_has_remain_bytes(self):
+        fio = FileIO(self.__exists_input_path)
+        self.assertTrue(fio.has_remain_bytes)
+
+        fio.read(self.__exists_input_file_size)
+        self.assertFalse(fio.has_remain_bytes)
+
+    def test_current_position(self):
+        fio = FileIO(self.__exists_input_path)
+        self.assertEqual(fio.current_position, 0)
+
+        read_bytes = 4
+        fio.read(read_bytes)
+        self.assertEqual(fio.current_position, read_bytes)
+
+    def test_skip(self):
+        fio = FileIO(self.__exists_input_path)
+        skip_bytes = 4
+        fio.skip(skip_bytes)
+        self.assertEqual(fio.current_position, skip_bytes)
+
+    def test_write(self):
+        data = b"Hello, World!"
+        
+        fio = FileIO(self.__output_path, "wb+")
+        fio.write(data)
+        fio.reset()
+        read_date = fio.read(fio.file_size)
+
+        self.assertEqual(data, read_date)
 
 
 # __main__ 변수는 모듈을 직접 실행하면 '__main__'이 되고, 임포트하면 모듈 이름이 됨
