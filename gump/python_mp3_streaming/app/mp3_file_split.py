@@ -1,7 +1,7 @@
 from mp3.fileio import FileIO
 from mp3.reader import MP3Reader
 
-input_file = FileIO("../tests/test_data/input.mp3")
+input_file = FileIO("../tests/test_data/original.mp3")
 reader = MP3Reader(input_file)
 input_data = reader.read_bytes_from_duration(30)
 input_file.close()
