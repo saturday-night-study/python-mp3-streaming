@@ -1,6 +1,7 @@
 import io
 import os
 
+from Tools.scripts.pep384_macrocheck import parse_file
 from fastapi import FastAPI
 from mp3_file_io import MP3FileIo
 from fastapi.responses import StreamingResponse
@@ -14,12 +15,14 @@ async def health_check():
     return {"status": "ok"}
 
 
-@app.get("/stream-mp3/{file_path:path}")
+@app.get("/stream-mp3/{file_name:path}")
 async def stream_mp3(file_name: str):
+    print(f"Current working directory: {os.getcwd()}")
+
     path = f"../resource/{file_name}"
     mp3_io = MP3FileIo()
 
-    if not mp3_io.file_exists():
+    if not mp3_io.file_exists(path):
         return Response(status_code=404, content="파일을 찾을 수 없습니다")
     try:
         mp3_io.open(path)
@@ -29,7 +32,7 @@ async def stream_mp3(file_name: str):
     finally:
         mp3_io.close()
 
-    # 추후 MP3 클래스를 사용하여 MP3 파일을 일부만 읽어오는 방법을 구현할 수 있습니다.
+# 추후 MP3 클래스를 사용하여 MP3 파일을 일부만 읽어오는 방법을 구현할 수 있습니다.
     # mp3 = MP3(mp3_io)
     # mp3.set_header()
     # mp3.set_frame_size()
