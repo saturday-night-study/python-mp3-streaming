@@ -11,7 +11,7 @@ class MP3FrameHeader:
     layer: int
     protection_bit: int
     bitrate_index: int
-    sampling_rate: int
+    sampling_rate_index: int
     padding_bit: int
     private_bit: int
     channel_mode: int
@@ -26,25 +26,36 @@ class MP3FrameHeader:
                 self.sync_word == SYNC_WORD
                 and self.version == MPEG_VERSION_ONE
                 and self.layer == LAYER_THREE
+                and self.sampling_rate > 0
         )
 
-    # 데이타 클래스를 사용할때 __repr__ 메서드는 자동 생성되기 때문에 아래 코드를 주석 처리
-    # 학습 목적을 위해서 주석을 남겨 놓음
-    # def __repr__(self):
-    #     return (
-    #         f"MP3FrameHeader(sync_word={self.sync_word}, version={self.version}, layer={self.layer}, "
-    #         f"protection_bit={self.protection_bit}, bitrate_index={self.bitrate_index}, "
-    #         f"sampling_rate={self.sampling_rate}, padding_bit={self.padding_bit}, private_bit={self.private_bit}, "
-    #         f"channel_mode={self.channel_mode}, mode_extension={self.mode_extension}, copyright={self.copyright}, "
-    #         f"original={self.original}, emphasis={self.emphasis})"
-    #     )
+    @property
+    def sampling_rate(self) -> int:
+        return SAMPLING_RATE_ITEMS.get(self.sampling_rate_index, 0)
+
+    @property
+    def bitrate(self) -> int:
+        return BITRATE_ITEMS.get(self.bitrate_index, 0) * 1000
+
+    @property
+    def frame_length(self) -> int:
+        # http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm
+        # FrameLengthInBytes = 144 * BitRate / SampleRate + Padding
+        return int(MPEG_VERSION_ONE_MULTIPLIER * self.bitrate / self.sampling_rate) + self.padding_bit
+
+    @property
+    def audio_data_length(self) -> int:
+        return self.frame_length - FRAME_HEADER_SIZE
+
+    @property
+    def audio_data_duration(self) -> float:
+        # Duration = Layer 3 Samples(1152) / SampleRate
+        return LAYER_THREE_SAMPLES / self.sampling_rate
 
     def __str__(self):
         version_desc = VERSION_ITEMS.get(self.version, "Unknown")
         layer_desc = LAYER_ITEMS.get(self.layer, "Unknown")
         protection_bit_desc = PROTECTION_BIT_ITEMS.get(self.protection_bit, "Unknown")
-        bitrate_desc = BITRATE_ITEMS.get(self.bitrate_index, "Unknown")
-        sampling_rate_desc = SAMPLING_RATE_ITEMS.get(self.sampling_rate, "Unknown")
         padding_bit_desc = PADDING_BIT_ITEMS.get(self.padding_bit, "Unknown")
         channel_mode_desc = CHANNEL_MODE_ITEMS.get(self.channel_mode, "Unknown")
         copyright_desc = COPYRIGHT_ITEMS.get(self.copyright, "Unknown")
@@ -60,8 +71,8 @@ class MP3FrameHeader:
             f"{'Version':<{field_width}} {version_desc}\n"
             f"{'Layer':<{field_width}} {layer_desc}\n"
             f"{'Protection bit':<{field_width}} {protection_bit_desc}\n"
-            f"{'Bitrate Index':<{field_width}} {bitrate_desc}\n"
-            f"{'Sampling Rate':<{field_width}} {sampling_rate_desc}\n"
+            f"{'Bitrate Index':<{field_width}} {self.bitrate}\n"
+            f"{'Sampling Rate':<{field_width}} {self.sampling_rate}\n"
             f"{'Padding Bit':<{field_width}} {padding_bit_desc}\n"
             f"{'Private Bit':<{field_width}} {self.private_bit}\n"
             f"{'Channel Mode':<{field_width}} {channel_mode_desc}\n"
@@ -77,20 +88,13 @@ class MP3FrameHeader:
             f"{"-" * (field_width * 2)}\n"
         )
 
-    @property
-    def frame_length(self) -> int:
-        # http://mpgedit.org/mpgedit/mpeg_format/mpeghdr.htm
-        # FrameLengthInBytes = 144 * BitRate / SampleRate + Padding
-        bitrate = BITRATE_ITEMS.get(self.bitrate_index, 0) * 1000
-        sample_rate = SAMPLING_RATE_ITEMS.get(self.sampling_rate, 0)
-        return int(MPEG_VERSION_ONE_MULTIPLIER * bitrate / sample_rate) + self.padding_bit
-
-    @property
-    def audio_data_length(self) -> int:
-        return self.frame_length - FRAME_HEADER_SIZE
-
-    @property
-    def audio_data_duration(self) -> float:
-        # Duration = Layer 3 Samples(1152) / SampleRate
-        sample_rate = SAMPLING_RATE_ITEMS.get(self.sampling_rate, 0)
-        return LAYER_THREE_SAMPLES / sample_rate
+    # 데이타 클래스를 사용할때 __repr__ 메서드는 자동 생성되기 때문에 아래 코드를 주석 처리
+    # 학습 목적을 위해서 주석을 남겨 놓음
+    # def __repr__(self):
+    #     return (
+    #         f"MP3FrameHeader(sync_word={self.sync_word}, version={self.version}, layer={self.layer}, "
+    #         f"protection_bit={self.protection_bit}, bitrate_index={self.bitrate_index}, "
+    #         f"sampling_rate={self.sampling_rate}, padding_bit={self.padding_bit}, private_bit={self.private_bit}, "
+    #         f"channel_mode={self.channel_mode}, mode_extension={self.mode_extension}, copyright={self.copyright}, "
+    #         f"original={self.original}, emphasis={self.emphasis})"
+    #     )

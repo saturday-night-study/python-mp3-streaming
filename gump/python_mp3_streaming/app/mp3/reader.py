@@ -12,44 +12,65 @@ class MP3Reader:
 
     def __read_frame_header(self) -> Optional[MP3FrameHeader]:
         if self.__fio.closed:
-            raise IOError()
+            raise EndOfMP3FrameError()
+
+        header: Optional[MP3FrameHeader] = None
 
         # Sync Word를 찾을 때까지 1바이트씩 이동
         while True:
-            position = self.__fio.current_position
-            data = self.__fio.read(FRAME_HEADER_SIZE)
-            if len(data) < FRAME_HEADER_SIZE:
+            try:
+                header_bytes = self.__find_sync_word() + self.__fio.read(FRAME_HEADER_SIZE - 2)
+            except EOFError:
                 raise EndOfMP3FrameError()
 
-            header = MP3Reader.__parse_header(position, data)
+            if len(header_bytes) < FRAME_HEADER_SIZE:
+                raise EndOfMP3FrameError()
+
+            position = self.__fio.current_position - FRAME_HEADER_SIZE
+            header = MP3Reader.__parse_header(position, header_bytes)
             if header.is_valid_frame:
-                break
+                return header
 
-            self.__fio.skip(-(FRAME_HEADER_SIZE - 1))
+            self.__fio.skip(-2)
 
-        return header
+    # 재귀 함수로 만들고 싶었지만 파이썬에서는 재귀 함수의 깊이 제한이 있어서 RecursionError를 발생시킴
+    # 기본 재귀 깊이는 1000회이며, sys.setrecursionlimit() 함수로 변경은 가능하지만 권장하지 않음
+    # 재귀 깊이가 예상 가능 범위일 경우만 재귀 함수를 사용하는게 바람직할 것으로 보임
+    def __find_sync_word(self) -> bytes:
+        first_byte: Optional[bytes] = None
+        second_byte: Optional[bytes] = None
+        while True:
+            if first_byte is None:
+                first_byte = self.__fio.read(1)
+
+            if MP3Reader.__get_bits(first_byte, SYNC_WORD_FIRST_BYTE_RANGE) == SYNC_WORD_FIRST_BYTE:
+                second_byte = self.__fio.read(1)
+                if MP3Reader.__get_bits(second_byte, SYNC_WORD_SECOND_BYTE_RANGE) == SYNC_WORD_SECOND_BYTE:
+                    return first_byte + second_byte
+            else:
+                first_byte = second_byte
 
     @staticmethod
     def __parse_header(position: int, data: bytes) -> Optional[MP3FrameHeader]:
         return MP3FrameHeader(
             position=position,
-            sync_word=MP3Reader.__get_bits_from_bytes(data, SYNC_WORD_RANGE),
-            version=MP3Reader.__get_bits_from_bytes(data, VERSION_RANGE),
-            layer=MP3Reader.__get_bits_from_bytes(data, LAYER_RANGE),
-            protection_bit=MP3Reader.__get_bits_from_bytes(data, PROTECTION_BIT_RANGE),
-            bitrate_index=MP3Reader.__get_bits_from_bytes(data, BITRATE_INDEX_RANGE),
-            sampling_rate=MP3Reader.__get_bits_from_bytes(data, SAMPLING_RATE_RANGE),
-            padding_bit=MP3Reader.__get_bits_from_bytes(data, PADDING_BIT_RANGE),
-            private_bit=MP3Reader.__get_bits_from_bytes(data, PRIVATE_BIT_RANGE),
-            channel_mode=MP3Reader.__get_bits_from_bytes(data, CHANNEL_MODE_RANGE),
-            mode_extension=MP3Reader.__get_bits_from_bytes(data, MODE_EXTENSION_RANGE),
-            copyright=MP3Reader.__get_bits_from_bytes(data, COPYRIGHT_RANGE),
-            original=MP3Reader.__get_bits_from_bytes(data, ORIGINAL_RANGE),
-            emphasis=MP3Reader.__get_bits_from_bytes(data, EMPHASIS_RANGE)
+            sync_word=MP3Reader.__get_bits(data, SYNC_WORD_RANGE),
+            version=MP3Reader.__get_bits(data, VERSION_RANGE),
+            layer=MP3Reader.__get_bits(data, LAYER_RANGE),
+            protection_bit=MP3Reader.__get_bits(data, PROTECTION_BIT_RANGE),
+            bitrate_index=MP3Reader.__get_bits(data, BITRATE_INDEX_RANGE),
+            sampling_rate_index=MP3Reader.__get_bits(data, SAMPLING_RATE_RANGE),
+            padding_bit=MP3Reader.__get_bits(data, PADDING_BIT_RANGE),
+            private_bit=MP3Reader.__get_bits(data, PRIVATE_BIT_RANGE),
+            channel_mode=MP3Reader.__get_bits(data, CHANNEL_MODE_RANGE),
+            mode_extension=MP3Reader.__get_bits(data, MODE_EXTENSION_RANGE),
+            copyright=MP3Reader.__get_bits(data, COPYRIGHT_RANGE),
+            original=MP3Reader.__get_bits(data, ORIGINAL_RANGE),
+            emphasis=MP3Reader.__get_bits(data, EMPHASIS_RANGE)
         )
 
     @staticmethod
-    def __get_bits_from_bytes(data: bytes, frame_header_range: FrameHeaderRange) -> int:
+    def __get_bits(data: bytes, frame_header_range: FrameHeaderRange) -> int:
         int_data = int.from_bytes(data, byteorder='big')
         total_bits = len(data) * 8
         shift_length = total_bits - frame_header_range.offset - frame_header_range.length
@@ -69,18 +90,15 @@ class MP3Reader:
 
     def __next__(self):
         while self.__fio.has_remain_bytes:
-            try:
-                header = self.__read_frame_header()
-            except IOError:
-                break
+            header = self.__read_frame_header()
 
             self.__fio.skip(header.audio_data_length)
 
             return header
 
-        raise StopIteration()
+        raise EndOfMP3FrameError()
 
-    def read_bytes_from_duration(self, seconds) -> bytes:
+    def read_bytes_from_duration(self, seconds: int) -> bytes:
         reader = MP3Reader(self.__fio)
         duration = 0
 

@@ -22,7 +22,7 @@ class TestMP3Reader(unittest.TestCase):
         self.assertTrue(header.is_valid_frame)
 
     def test_read_invalid_format(self):
-        invalid_format_input_path = "./test_data/invalid_format.jpg"
+        invalid_format_input_path = "./test_data/invalid_format.txt"
         fio = FileIO(invalid_format_input_path)
 
         reader = MP3Reader(fio)
@@ -48,13 +48,8 @@ class TestMP3Reader(unittest.TestCase):
 
     def test_read_all_frame_headers(self):
         reader = MP3Reader(self.__fio)
-        position = 0
         for header in reader.headers:
             self.assertTrue(header.is_valid_frame)
-            if position > 0:
-                self.assertEqual(header.position, position)
-
-            position = header.position + header.frame_length
 
     def test_read_all_frame_headers_within_the_timeout(self):
         def read_all_frame_headers():

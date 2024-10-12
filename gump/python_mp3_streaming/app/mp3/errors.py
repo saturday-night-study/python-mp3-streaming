@@ -1,2 +1,2 @@
-class EndOfMP3FrameError(EOFError):
+class EndOfMP3FrameError(StopIteration):
     pass

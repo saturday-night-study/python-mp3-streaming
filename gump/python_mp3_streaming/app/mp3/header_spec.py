@@ -9,6 +9,8 @@ class FrameHeaderRange(NamedTuple):
 
 
 SYNC_WORD_RANGE = FrameHeaderRange(0, 11)
+SYNC_WORD_FIRST_BYTE_RANGE = FrameHeaderRange(0, 8)
+SYNC_WORD_SECOND_BYTE_RANGE = FrameHeaderRange(0, 3)
 VERSION_RANGE = FrameHeaderRange(11, 2)
 LAYER_RANGE = FrameHeaderRange(13, 2)
 PROTECTION_BIT_RANGE = FrameHeaderRange(15, 1)
@@ -23,6 +25,8 @@ ORIGINAL_RANGE = FrameHeaderRange(29, 1)
 EMPHASIS_RANGE = FrameHeaderRange(30, 2)
 
 SYNC_WORD: Final[int] = 0b11111111111
+SYNC_WORD_FIRST_BYTE: Final[int] = 0b11111111
+SYNC_WORD_SECOND_BYTE: Final[int] = 0b111
 MPEG_VERSION_ONE: Final[int] = 0b11
 MPEG_VERSION_ONE_MULTIPLIER: Final[int] = 144
 LAYER_THREE: Final[int] = 0b01
