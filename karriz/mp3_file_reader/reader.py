@@ -1,54 +1,45 @@
 import os
 
-from . import enum, const 
-
-from .model import MP3, MP3FrameHeader
-from .error import EmptySizeFileError, InvalidFrameSyncError, InValidFrameHeaderSizeError, VersionNotMatchedError
+from . import enum, const, model, error
 
 class MP3FileReader:
     def __init__(self, file_path:str):
         file_size = os.path.getsize(file_path)
 
         if file_size == 0:
-            raise EmptySizeFileError
+            raise error.EmptySizeFileError
 
-        self.__file_path = file_path
+        self.mp3 = model.MP3File()
+        self.mp3.file_path = file_path
 
-    def read(self) -> MP3:
-        mp3 = MP3()
+    def read(self) -> model.MP3File:
+        mp3_file = open(self.mp3.file_path, 'rb')
 
-        mp3_file = open(self.__file_path, 'rb')
-
-        total_duration = 0.0
         while True:
             try:
                 frame_header_parser = MP3FrameHeaderParser(mp3_file.read(4))
 
-                total_duration += frame_header_parser.get_frame_duration()
+                self.mp3.total_duration += frame_header_parser.get_frame_duration()
                 mp3_file.seek(frame_header_parser.get_frame_size()-4, 1)
 
-            except InValidFrameHeaderSizeError:
+                self.mp3.total_frame += 1
+            except error.InValidFrameHeaderSizeError:
                 break
 
         mp3_file.close()
 
-        mp3.total_duration = int(total_duration)
-        
-        return mp3
-
-    def get_mp3_file(self):
-        return self.__mp3_file
+        return self.mp3
 
 class MP3FrameHeaderParser:
     def __init__(self, data:bytes):
         if len(data) != 4:  
-            raise InValidFrameHeaderSizeError
+            raise error.InValidFrameHeaderSizeError
 
         header_bits = int.from_bytes(data, byteorder='big')
         
         syncword = (header_bits >> 21) & const.SYNC_WORD_MASK
         if syncword != const.SYNC_WORD_MASK:
-            raise InvalidFrameSyncError
+            raise error.InvalidFrameSyncError
 
         # parse & masking all attributes
         version = (header_bits >> 19) & const.VERSION_MASK
@@ -65,7 +56,7 @@ class MP3FrameHeaderParser:
         emphasis = (header_bits >> 0) & const.EMPHASIS_MASK
 
         # instantiate mp3_frame_header dataclass
-        mp3_frame_header = MP3FrameHeader()
+        mp3_frame_header = model.MP3FrameHeader()
         
         # version
         mp3_frame_header.version = enum.MP3Version(version)
