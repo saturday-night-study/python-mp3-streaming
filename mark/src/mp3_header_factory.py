@@ -2,7 +2,6 @@ from mp3_header import MP3Header
 
 
 class MP3HeaderFactory:
-
     @classmethod
     def create(cls, bytes):
         versions = {
@@ -34,9 +33,10 @@ class MP3HeaderFactory:
             15: "bad",
         }
         sampling_rates = {
-            0: "44100",
-            1: "48000",
-            2: "32000",
+            0: {0: 44100, 1: 22050, 2: 11025},  # MPEG-1
+            1: {0: 48000, 1: 24000, 2: 12000},  # MPEG-2
+            2: {0: 32000, 1: 16000, 2: 8000},   # MPEG-2.5
+            3: {0: 44100, 1: 48000, 2: 32000},  # MPEG-1 (추가)
         }
         channel_modes = {
             0: "Stereo",
@@ -61,7 +61,7 @@ class MP3HeaderFactory:
         layer = layers[(bytes[1] & 0x06) >> 1]
         protection = (bytes[1] & 0x01)
         bitrate = bitrate[(bytes[2] & 0xF0) >> 4]
-        sampling_rate = sampling_rates[(bytes[2] & 0x0C) >> 2]
+        sampling_rate = sampling_rates[(bytes[1] & 0x18) >> 3][(bytes[2] & 0x0C) >> 2]
         padding = (bytes[2] & 0x02) >> 1
         private = (bytes[2] & 0x01)
         channel_mode = channel_modes[(bytes[3] & 0xC0) >> 6]

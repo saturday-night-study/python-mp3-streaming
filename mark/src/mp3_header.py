@@ -6,8 +6,8 @@ class MP3Header:
     version: str
     layer: str
     protection: int
-    bitrate: str
-    sampling_rate: str
+    bitrate: int
+    sampling_rate: int
     padding: int
     private: int
     channel_mode: str
@@ -30,3 +30,5 @@ class MP3Header:
         print(f"original: {self.original}")
         print(f"emphasis: {self.emphasis}")
 
+    def calc_frame_size(self):
+        return int((144 * int(self.bitrate) * 1000) / self.sampling_rate + self.padding)
