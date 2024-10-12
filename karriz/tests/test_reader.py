@@ -1,49 +1,33 @@
 import unittest
-import mp3_file_reader
+import mp3
 
-from mp3_file_reader import InvalidFrameSyncError
+class MP3FileReaderTests(unittest.TestCase):
+    def test_read_mp3_file(self):
+        reader = mp3.MP3FileReader("./assets/input.mp3")
 
-class MP3FileParserTests(unittest.TestCase):    
-    # [실패] mp3 file이 존재 하지 않는 경로로 읽는다    
-    def test_new_mp3file_not_found(self):
-        with self.assertRaises(FileNotFoundError):
-            self.mp3_file_reader = mp3_file_reader.MP3FileParser("./test.mp3")
+        mp3_file = reader.read()
 
-    # [실패] file이 아닌 경로를 읽는다
-    def test_new_mp3file_read_directory(self):
-        with self.assertRaises(IsADirectoryError):
-            self.mp3_file_reader = mp3_file_reader.MP3FileParser("./assets")
+        # 읽은 파일 경로 확인
+        self.assertEqual(mp3_file.file_path, "./assets/input.mp3")
 
-    # [성공] 정상경로에 있는 파일을 읽는다
-    def test_new_mp3file_read(self):
-        self.mp3_file_reader = mp3_file_reader.MP3FileParser("./assets/input.mp3")
+        # 재생 시간 3분 54초를 기준으로 계산
+        self.assertEqual(int(mp3_file.total_duration), 234)
 
-        self.assertIsNotNone(self.mp3_file_reader)
+class MP3FileTrimmerTests(unittest.TestCase):
+    def setUp(self):
+        reader = mp3.MP3FileReader("./assets/input.mp3")
 
-    # [실패] 빈 MP3 파일을 파싱한다.
-    def test_parse_empty_file(self):
-        with self.assertRaises(ValueError):
-            self.mp3_file_reader = mp3_file_reader.MP3FileParser("./assets/empty.mp3")
+        self.mp3_file = reader.read()
+
+    def test_trim_mp3_file(self):
+        mp3_file_trimmer = mp3.MP3FileTrimmer(self.mp3_file)
+
+        # mp3 파일을 프레임 단위로 trimming 후 경로로 저장
+        trimmed_mp3 = mp3_file_trimmer.trim(0, 1000, "./assets/trimmed_input.mp3")
+
+        # trimming 된 이후 총 duration이 1000 프레임 만큼 잘렸는지 확인
+        # 1 프레임당 대략 0.026s = 1000 프레임은 26s
+        self.assertEqual(int(trimmed_mp3.total_duration), 26)
         
-            self.mp3_file_reader.parse()
-
-    # [실패] 잘못된 헤더 타입을 가진 파일을 파싱한다.
-    def test_parse_wrong_file(self):
-        with self.assertRaises(InvalidFrameSyncError):
-            self.mp3_file_reader = mp3_file_reader.MP3FileParser("./assets/wrong.mp3")
-
-            self.mp3_file_reader.parse()
-
-    # [성공] 정상 테스트 MP3File 파싱
-    def test_parse_file(self): 
-        mp3filereader = mp3_file_reader.MP3FileParser("./assets/input.mp3")
-        
-        mp3filereader.parse()
-
-class MP3FileTrimmerTests(unittest.TestCase):    
-    # [실패] 잘못 된 파일로 트리밍 후 파일 저장 실패
-    def test_trim_wrong_file(self):
-        pass
-
 if __name__ == '__main__':
    unittest.main()
