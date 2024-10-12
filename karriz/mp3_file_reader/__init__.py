@@ -1,10 +1,11 @@
-from .parser import MP3FileParser
+from .reader import MP3FileReader
 from .trimmer import MP3FileTrimmer
 from .enum import MP3Version, MP3Layer, MP3Protection, MP3PaddingBit, MP3ChannelMode ,MP3Copyright ,MP3Original, MP3Emphasis
 from .error import FileStreamNotLoadedError, InvalidFrameSyncError, VersionNotMatchedError, LayerNotMatchedError
 
 __all__ = [
-    'MP3FileParser',
+    'MP3FileReader',
+    'MP3FileTrimmer',
     'MP3Version',             # MP3 버전
     'MP3Layer',               # MP3 레이어
     'MP3Protection',          # MP3 보호

@@ -1,10 +1,10 @@
-from .parser import MP3File
+from .model import MP3
 
 class MP3FileTrimmer:
-    def __init__(self, mp3file:MP3File):
-        self.mp3_file = mp3file
+    def __init__(self, mp3:MP3):
+        self.mp3 = mp3
 
-    def trim(self, start:int, end:int) -> MP3File:
-        trimmed_mp3_file = self.mp3_file
+    def trim(self, start:int, end:int) -> MP3:
+        trimmed_mp3 = self.mp3
 
-        return trimmed_mp3_file
+        return trimmed_mp3
