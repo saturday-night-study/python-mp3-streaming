@@ -1,0 +1,14 @@
+[tool.poetry]
+name = "mp3"
+version = "0.0.4"
+description = "MP3 File Processing Package"
+authors = ["karriz-dev <karriz@xymfor.us>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

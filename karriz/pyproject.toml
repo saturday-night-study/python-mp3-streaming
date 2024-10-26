@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "mp3-web-api"
+version = "0.0.1"
+description = "MP3 File Processing Package"
+authors = ["karriz-dev <karriz@xymfor.us>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
