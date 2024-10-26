@@ -301,5 +301,4 @@ pip-selfcheck.json
 # End of https://www.toptal.com/developers/gitignore/api/python,venv,pycharm
 
 
-*.mp3
-*.jpg
+tests/test_data/**
