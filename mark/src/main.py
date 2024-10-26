@@ -1,8 +1,8 @@
 from mp3 import MP3
 from mp3_file_io import MP3FileIo
 
-reader = MP3FileIo("../resource/input.mp3")
-reader.open()
+reader = MP3FileIo()
+reader.open("../resource/input.mp3")
 reader.read_all()
 
 mp3 = MP3(reader)

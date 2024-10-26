@@ -7,8 +7,8 @@ class MP3FileIo:
         self.file_obj = None
         self.bytes = None
 
-    def file_exists(self):
-        return os.path.exists(self.file_path)
+    def file_exists(self, path):
+        return os.path.exists(path)
 
     def open(self, file_path):
         try:
