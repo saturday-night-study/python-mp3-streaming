@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "mp3"
+version = "0.1.0"
+description = ""
+authors = ["karriz-dev <karriz@xymfor.us>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.115.3"
+uvicorn = "^0.32.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
