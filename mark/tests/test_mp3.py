@@ -50,5 +50,16 @@ class TestMp3(unittest.TestCase):
         output.save("../resource/output.mp3")
 
 
+    def test_mp3_set_speed(self):
+        mp3 = MP3(self.reader)
+        mp3.set_header()
+        mp3.set_frame_size()
+        mp3.set_frame_count()
+        mp3.set_play_time()
+
+        output = mp3.set_speed(2)
+        output.save("../resource/output_x2.mp3")
+
+
 if __name__ == '__main__':
     unittest.main()
