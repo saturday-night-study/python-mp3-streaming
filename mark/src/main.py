@@ -13,5 +13,5 @@ mp3.set_play_time()
 
 print(mp3.header)
 print(mp3.frame_size)
-print(mp3.frame_count)
-print(mp3.play_time)
+print(mp3._frame_count)
+print(mp3._play_time)
