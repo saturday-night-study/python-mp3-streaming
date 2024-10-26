@@ -27,6 +27,9 @@ class MP3FileIo:
     def get(self, size):
         return self.bytes[0:size]
 
+    def get_bytes(self, start, end):
+        return self.bytes[start:end]
+
     def get_all(self):
         return self.bytes
 
@@ -60,6 +63,12 @@ class MP3FileIo:
     def cut_frames(self, start_byte, end_byte):
         io = MP3FileIo()
         io.bytes = self.bytes[0:4] + self.bytes[start_byte:end_byte]
+        return io
+
+    def change_frames(self, frames : bytearray):
+        new_bytes = self.bytes[0:4] + frames
+        io = MP3FileIo()
+        io.bytes = new_bytes
         return io
 
     def save(self, file_path):

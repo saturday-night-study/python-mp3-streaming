@@ -36,6 +36,13 @@ class MP3:
     def get_play_time(self):
         return self.play_time
 
+    def get_frame(self, index) -> bytes:
+        offset = 4
+        start = offset + index * self.frame_size
+        end = start + self.frame_size
+        frame = self.file_io.get_bytes(start, end)
+        return frame
+
     def cut(self, start_time, end_time):
         start_frame = int(start_time * self.header.sampling_rate / 1152)
         end_frame = int(end_time * self.header.sampling_rate / 1152)
@@ -47,5 +54,42 @@ class MP3:
         io = self.file_io.cut_frames(start_byte, end_byte)
         return MP3(io)
 
+    def change_speed_down(self, speed: int):
+        if speed <= 0:
+            raise ValueError("Speed must be greater than 0")
+
+        # 일단 전체 프레임을 배열로 저장한다
+        frames = []
+        for i in range(self.frame_count):
+            frames.append(self.get_frame(i))
+
+        new_frames = bytearray()
+        for i in range(self.frame_count):
+            for _ in range(speed):
+                new_frames.extend(frames[i])
+
+        io = self.file_io.change_frames(new_frames)
+        return MP3(io)
+
+    def change_speed_up(self, speed: int):
+        if speed <= 0:
+            raise ValueError("Speed must be greater than 0")
+
+        # 일단 전체 프레임을 배열로 저장한다
+        frames = []
+        for i in range(self.frame_count):
+            frames.append(self.get_frame(i))
+
+        new_frames = bytearray()
+
+        i = 0
+        while i < self.frame_count:
+            new_frames.extend(frames[i])
+            i += speed
+
+        io = self.file_io.change_frames(new_frames)
+        return MP3(io)
+
     def save(self, file_path):
         self.file_io.save(file_path)
+
