@@ -65,8 +65,11 @@ class MP3FileIo:
         io.bytes = self.bytes[0:4] + self.bytes[start_byte:end_byte]
         return io
 
-    def change_frames(self, frames : bytearray):
-        new_bytes = self.bytes[0:4] + frames
+    def change_frames(self, frames):
+        new_bytes = self.bytes[0:4]
+
+        for frame in frames:
+            new_bytes += frame
         io = MP3FileIo()
         io.bytes = new_bytes
         return io

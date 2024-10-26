@@ -46,7 +46,7 @@ class TestMp3(unittest.TestCase):
         mp3.set_frame_count()
         mp3.set_play_time()
 
-        output = mp3.cut(0, 10)
+        output = mp3.cut(0, 20)
         output.save("../resource/output.mp3")
 
 

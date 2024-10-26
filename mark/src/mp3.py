@@ -37,9 +37,9 @@ class MP3:
         return self.play_time
 
     def get_frame(self, index) -> bytes:
-        offset = 4
-        start = offset + index * self.frame_size
-        end = start + self.frame_size
+        frame_size = self.header.calc_frame_size()
+        start = 4 + index * frame_size
+        end = start + frame_size
         frame = self.file_io.get_bytes(start, end)
         return frame
 
@@ -48,7 +48,7 @@ class MP3:
         end_frame = int(end_time * self.header.sampling_rate / 1152)
 
         frame_size = self.header.calc_frame_size()
-        start_byte = start_frame * frame_size
+        start_byte = 4 + start_frame * frame_size
         end_byte = end_frame * frame_size
 
         io = self.file_io.cut_frames(start_byte, end_byte)
@@ -63,10 +63,10 @@ class MP3:
         for i in range(self.frame_count):
             frames.append(self.get_frame(i))
 
-        new_frames = bytearray()
+        new_frames = []
         for i in range(self.frame_count):
             for _ in range(speed):
-                new_frames.extend(frames[i])
+                new_frames.append(frames[i])
 
         io = self.file_io.change_frames(new_frames)
         return MP3(io)
@@ -80,11 +80,12 @@ class MP3:
         for i in range(self.frame_count):
             frames.append(self.get_frame(i))
 
-        new_frames = bytearray()
+        new_frames = []
 
         i = 0
         while i < self.frame_count:
-            new_frames.extend(frames[i])
+            print(f"Processing frame {i}")
+            new_frames.append(frames[i])
             i += speed
 
         io = self.file_io.change_frames(new_frames)
