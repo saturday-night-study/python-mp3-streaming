@@ -1,5 +1,4 @@
 import os
-from typing import AsyncIterable
 
 import uvicorn
 from fastapi import FastAPI
@@ -19,15 +18,9 @@ async def play(ts: int = Query(0, ge=0)) -> StreamingResponse:
     file_path = f"{project_root}/tests/test_data/original.mp3"
     fio = FileIO(file_path)
     reader = MP3Reader(fio)
-    data = reader.read_bytes_from_duration(ts)
-    fio.close()
+    content_stream = reader.content_stream_from_duration(ts, True)
 
-    return StreamingResponse(__data_to_generator(data), media_type="audio/mpeg")
-
-
-async def __data_to_generator(data: bytes, chunk_size: int = 4096) -> AsyncIterable[bytes]:
-    for i in range(0, len(data), chunk_size):
-        yield data[i:i + chunk_size]
+    return StreamingResponse(content_stream, media_type="audio/mpeg")
 
 
 if __name__ == "__main__":

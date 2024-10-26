@@ -3,9 +3,8 @@ from dataclasses import dataclass
 from app.mp3.header_spec import *
 
 
-@dataclass(frozen=True)
+@dataclass
 class MP3FrameHeader:
-    position: int
     sync_word: int
     version: int
     layer: int
@@ -20,12 +19,15 @@ class MP3FrameHeader:
     original: int
     emphasis: int
 
+    audio_data: bytes
+
     @property
     def is_valid_frame(self) -> bool:
         return (
                 self.sync_word == SYNC_WORD
                 and self.version == MPEG_VERSION_ONE
                 and self.layer == LAYER_THREE
+                and self.bitrate > 0
                 and self.sampling_rate > 0
         )
 
@@ -51,6 +53,25 @@ class MP3FrameHeader:
     def audio_data_duration(self) -> float:
         # Duration = Layer 3 Samples(1152) / SampleRate
         return LAYER_THREE_SAMPLES / self.sampling_rate
+
+    def to_bytes(self) -> bytes:
+        header = (
+                (self.sync_word & 0x7FF) << 21
+                | (self.version & 0x3) << 19
+                | (self.layer & 0x3) << 17
+                | (self.protection_bit & 0x1) << 16
+                | (self.bitrate_index & 0xF) << 12
+                | (self.sampling_rate_index & 0x3) << 10
+                | (self.padding_bit & 0x1) << 9
+                | (self.private_bit & 0x1) << 8
+                | (self.channel_mode & 0x3) << 6
+                | (self.mode_extension & 0x3) << 4
+                | (self.copyright & 0x1) << 3
+                | (self.original & 0x1) << 2
+                | (self.emphasis & 0x3)
+        )
+
+        return header.to_bytes(4, byteorder='big')
 
     def __str__(self):
         version_desc = VERSION_ITEMS.get(self.version, "Unknown")
@@ -81,7 +102,6 @@ class MP3FrameHeader:
             f"{'Original':<{field_width}} {original_desc}\n"
             f"{'Emphasis':<{field_width}} {emphasis_desc}\n"
             f"{"-" * (field_width * 2)}\n"
-            f"{'Position':<{field_width}} {self.position}\n"
             f"{'Frame Length':<{field_width}} {self.frame_length}\n"
             f"{'Audio Data Length':<{field_width}} {self.audio_data_length}\n"
             f"{'Audio Data Duration':<{field_width}} {self.audio_data_duration}\n"

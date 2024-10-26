@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, AsyncIterable
 
 from app.mp3.errors import EndOfMP3FrameError
 from app.mp3.fileio import FileIO
@@ -14,8 +14,6 @@ class MP3Reader:
         if self.__fio.closed:
             raise EndOfMP3FrameError()
 
-        header: Optional[MP3FrameHeader] = None
-
         # Sync Word를 찾을 때까지 1바이트씩 이동
         while True:
             try:
@@ -26,9 +24,9 @@ class MP3Reader:
             if len(header_bytes) < FRAME_HEADER_SIZE:
                 raise EndOfMP3FrameError()
 
-            position = self.__fio.current_position - FRAME_HEADER_SIZE
-            header = MP3Reader.__parse_header(position, header_bytes)
+            header: Optional[MP3FrameHeader] = MP3Reader.__parse_header(header_bytes)
             if header.is_valid_frame:
+                header.audio_data = self.__fio.read(header.audio_data_length)
                 return header
 
             self.__fio.skip(-2)
@@ -51,9 +49,8 @@ class MP3Reader:
                 first_byte = second_byte
 
     @staticmethod
-    def __parse_header(position: int, data: bytes) -> Optional[MP3FrameHeader]:
+    def __parse_header(data: bytes) -> Optional[MP3FrameHeader]:
         return MP3FrameHeader(
-            position=position,
             sync_word=MP3Reader.__get_bits(data, SYNC_WORD_RANGE),
             version=MP3Reader.__get_bits(data, VERSION_RANGE),
             layer=MP3Reader.__get_bits(data, LAYER_RANGE),
@@ -66,7 +63,8 @@ class MP3Reader:
             mode_extension=MP3Reader.__get_bits(data, MODE_EXTENSION_RANGE),
             copyright=MP3Reader.__get_bits(data, COPYRIGHT_RANGE),
             original=MP3Reader.__get_bits(data, ORIGINAL_RANGE),
-            emphasis=MP3Reader.__get_bits(data, EMPHASIS_RANGE)
+            emphasis=MP3Reader.__get_bits(data, EMPHASIS_RANGE),
+            audio_data=bytes(0)
         )
 
     @staticmethod
@@ -92,20 +90,28 @@ class MP3Reader:
         while self.__fio.has_remain_bytes:
             header = self.__read_frame_header()
 
-            self.__fio.skip(header.audio_data_length)
-
             return header
 
         raise EndOfMP3FrameError()
 
     def read_bytes_from_duration(self, seconds: int) -> bytes:
-        reader = MP3Reader(self.__fio)
         duration = 0
-
-        for header in reader.headers:
+        for header in self.headers:
             duration += header.audio_data_duration
             if duration >= seconds:
                 data = self.__fio.read(self.__fio.file_size - self.__fio.current_position)
                 return data
 
         return bytes()
+
+    async def content_stream_from_duration(self, seconds: int, closable: bool = False) -> AsyncIterable[bytes]:
+        duration = 0
+        for header in self.headers:
+            duration += header.audio_data_duration
+            if duration < seconds:
+                continue
+
+            yield header.to_bytes() + header.audio_data
+
+        if closable:
+            self.__fio.close()
